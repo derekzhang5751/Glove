@@ -24,7 +24,7 @@
             <tr style="height: 40px;">
                 <td><font size="3">验证码：</font></td>
                 <td>
-                    <input id="captcha" name="captcha" type="text" style="font-size: 16px; width: 70px; height: 30px; line-height: 30px;" value="{$CaptchaText}">
+                    <input id="captcha" name="captcha" type="text" style="font-size: 16px; width: 70px; height: 30px; line-height: 30px;" value="">
                 </td>
             </tr>
             <tr style="height: 40px;">

@@ -28,7 +28,7 @@ class GloveSession implements \Bricker\ISession
         $this->autoCreate = $autoCreate;
         
         if ( empty($this->sessionKey) ) {
-            $this->sessionKey = $_COOKIE[$this->sessionName];
+            $this->sessionKey = isset($_COOKIE[$this->sessionName]) ? $_COOKIE[$this->sessionName] : '';
         }
         
         if ( !empty($GLOBALS['cookie_path']) ) {
@@ -69,7 +69,7 @@ class GloveSession implements \Bricker\ISession
         $sessionId = md5(uniqid(mt_rand(), true));
         $this->sessionKey = substr($sessionId, 0, 32);
         $this->sessionData[$this->sessionName] = $this->sessionKey;
-        echo "new session key=" . $this->sessionKey . ", ";
+        
         return $this->db_insert_session();
     }
     

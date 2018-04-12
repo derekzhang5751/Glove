@@ -74,7 +74,7 @@ class login extends GloveBase {
             $GLOBALS['session']->setSessionData('captcha', $this->captchaText);
             // show login page
             $GLOBALS['smarty']->assign("CaptchaPic", $this->captchaPic);
-            $GLOBALS['smarty']->assign("CaptchaText", $this->captchaText);
+            //$GLOBALS['smarty']->assign("CaptchaText", $this->captchaText);
             $GLOBALS['smarty']->assign("msg", $this->return['msg']);
             $GLOBALS['smarty']->display('login.tpl');
         }

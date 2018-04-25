@@ -22,6 +22,10 @@ class Message extends GloveBase {
         'data' => []
     ];
     
+    public function __construct() {
+        //
+    }
+    
     protected function prepareRequestParams() {
         $postData = parent::prepareRequestParams();
         if ($postData) {

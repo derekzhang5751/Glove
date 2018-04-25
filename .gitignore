@@ -2,3 +2,4 @@
 nbproject
 .idea
 templates_c
+*.pyc

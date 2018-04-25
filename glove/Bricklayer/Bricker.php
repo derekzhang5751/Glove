@@ -6,8 +6,9 @@
  * Copyright 2017, Derek Zhang
  * Released under the MIT license
  */
-
 namespace Bricker;
+
+ini_set('date.timezone', 'Asia/Shanghai');
 
 if (!defined('USE_BRICKER')) {
     die('Hacking attempt');

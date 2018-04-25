@@ -7,6 +7,9 @@
 
 define('MD5_KEY', 'ikenviWCkkiCvk8834701lfkdjfd');
 
+define('LOTTERY_PK10', 0);
+define('LOTTERY_XYFT', 1);
+
 /* Define Error Type */
 define('SUCCESS',             0);
 define('ERROR_NETWORK',       1);

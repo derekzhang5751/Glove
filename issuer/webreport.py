@@ -32,7 +32,7 @@ class WebReport(threading.Thread):
             return False
         else:
             if resp.status_code == requests.codes.ok:
-                print("md5 Recv: " + resp.text)
+                # print("md5 Recv: " + resp.text)
                 j = resp.json()
                 return j
             else:

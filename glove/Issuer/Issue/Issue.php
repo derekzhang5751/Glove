@@ -74,6 +74,11 @@ class Issue extends GloveBase {
         $type = $this->getCurrentLotteryType();
         // Check current issue term
         $curDate = date("Y-m-d");
+        $curTime = intval( date("Hi") );
+        if ($curTime >= 0 && $curTime < 430) {
+            $tmpDate = $curDate . " 00:10:00";
+            $curDate = date("Y-m-d", strtotime($tmpDate . " -1 day"));
+        }
         $begin = $curDate . " 23:00:00";
         $end   = $curDate . " 23:59:59";
         //$success = false;
@@ -156,10 +161,9 @@ class Issue extends GloveBase {
         } else {
             // Maybe lottery type changed, check it out
             $curTime = intval( date("Hi") );
-            if ($curTime > 2350) {
+            if ($curTime > 0 && $curTime < 430) {
                 // initialize next day issues
-                $curDate = date("Y-m-d 23:59:50");
-                $initDate = date("Y-m-d", strtotime($curDate . " +10 minute"));
+                $initDate = date("Y-m-d");
                 $this->initPk10($initDate);
                 $this->initXyft($initDate);
             }
@@ -285,7 +289,7 @@ class Issue extends GloveBase {
         $end = $nextDay . " 03:59:59";
         $tmp = date("Y-m-d H:i:s", strtotime($begin . " +5 minute"));
         while ($tmp <= $end) {
-            $date = date("Ymd", strtotime($begin . " +5 minute"));
+            $date = date("ymd", strtotime($begin . " +5 minute"));
             $issueNum = sprintf("%s%03d", $date, $index);
             $index = $index + 1;
             $data = array(

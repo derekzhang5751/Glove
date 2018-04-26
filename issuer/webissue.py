@@ -54,7 +54,8 @@ class WebIssue(WebReport):
             if len(arr_data) > 0:
                 term = arr_data[0]
                 if issue_num == term['termNum']:
-                    self.lottery.gotIssueNum = term['termNum']
+                    tmp_num = issue_num[2:]
+                    self.lottery.gotIssueNum = tmp_num
                     self.lottery.gotIssueTime = term['lotteryTime']
                     self.lottery.ranking[0] = term['n1']
                     self.lottery.ranking[1] = term['n2']
@@ -69,7 +70,12 @@ class WebIssue(WebReport):
                     print "Got XYFT {} [{}]".format(self.lottery.gotIssueNum, self.lottery.gotIssueTime)
                     print "Ranking: " + ', '.join(map(str, self.lottery.ranking))
                     return
-        print "Fetch XYFT {} ERROR !!!".format(issue)
+                else:
+                    print "Fetch XYFT {} ERROR, {} <> {} !!!".format(issue, issue_num, term['termNum'])
+            else:
+                print "Fetch XYFT {} ERROR, ARRAY SIZE<=0 !!!".format(issue)
+        else:
+            print "Fetch XYFT {} ERROR, NOT SUCCESS !!!".format(issue)
         pass
 
     def fetch_issue(self):
@@ -106,6 +112,7 @@ class WebIssue(WebReport):
         resp = self.http_post_md5(url, issue_json)
         if resp:
             if resp['success']:
+                self.lottery.curLotteryType = resp['data']['nextIssueType']
                 self.lottery.nextIssueNum = resp['data']['nextIssueNum']
                 self.lottery.nextIssueTime = resp['data']['nextIssueTime']
                 return True

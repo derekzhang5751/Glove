@@ -256,7 +256,7 @@ class Issue extends GloveBase {
     private function initXyft($curDate) {
         $begin = $curDate . " 13:00:00";
         $end = $curDate . " 23:59:59";
-        $date = date("ymd", $begin);
+        $date = date("ymd", strtotime($begin));
         $allData = array();
         $tmp = date("Y-m-d H:i:s", strtotime($begin . " +5 minute"));
         $index = 1;
@@ -284,7 +284,7 @@ class Issue extends GloveBase {
             $tmp = date("Y-m-d H:i:s", strtotime($tmp . " +5 minute"));
         }
         // The second day
-        $date = date("ymd", $begin);
+        $date = date("ymd", strtotime($begin));
         $nextDay = date("Y-m-d", strtotime($end . " +60 minute"));
         $begin = $nextDay . " 00:00:00";
         $end = $nextDay . " 03:59:59";
@@ -326,6 +326,9 @@ class Issue extends GloveBase {
             return false;
         }
         
+        if (strlen($this->issueNum) > 9) {
+            $this->issueNum = substr($this->issueNum, -9);
+        }
         $this->issueNum = intval($this->issueNum);
         if ( $this->issueNum <= 0 ) {
             return true;

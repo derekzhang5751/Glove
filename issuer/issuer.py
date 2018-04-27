@@ -14,6 +14,13 @@ def get_active_time():
     if yu == 0:
         active = True
     s_time = time.strftime("[%Y-%m-%d %H:%M:%S]", cur_time)
+
+    s_tmp = s_time[11:]
+    if s_tmp < "09:00:00" and s_tmp > "04:10:00":
+        if active:
+            print("Break time {}".format(s_time))
+            active = False
+    pass
     return active, s_time
 
 

@@ -15,6 +15,7 @@ function db_message_insert($msg)
         'to_userid' => '',
         'to_nick' => $msg['to_nick'],
         'msg' => $msg['content'],
+        'cmd' => $msg['cmd'],
         'recv_time' => $msg['recvtime'],
         'reply' => $msg['reply'],
         'send_time' => $msg['sendtime'],

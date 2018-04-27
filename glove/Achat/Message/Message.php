@@ -96,6 +96,7 @@ class Message extends GloveBase {
         $this->return['data']['from_nick'] = $this->from_nick;
         $this->return['data']['to_nick'] = $this->to_nick;
         $this->return['data']['content'] = $this->content;
+        $this->return['data']['cmd'] = '';
         $this->return['data']['recvtime'] = $this->recvtime;
         $this->return['data']['reply'] = '';
         $this->return['data']['sendtime'] = '';
@@ -103,31 +104,32 @@ class Message extends GloveBase {
         
         // First, parse command from messasge
         $msg = $this->content;
-        $cmdArr = $this->stringToArray($msg);
+        $command = new Command($msg);
         
-        $cmd = $this->parseCommandFromMsg($cmdArr);
-        if (COMMAND_INVALID == $cmd) {
+        $cmdType = $command->getCmdType();
+        if (COMMAND_INVALID == $cmdType) {
             $this->fillWithInvalidCmd();
         } else {
             $this->fillWithSuccessCmd();
-            switch ($cmd) {
+            switch ($cmdType) {
                 case COMMAND_CHARGE:
                 case COMMAND_REGISTER:
-                    $this->processCharge($cmdArr);
+                    $this->processCharge($command);
                     break;
                 case COMMAND_ORDER:
-                    $this->processOrder($cmdArr);
+                    $this->processOrder($command);
                     break;
                 case COMMAND_BALANCE:
-                    $this->processBalance($cmdArr);
+                    $this->processBalance($command);
                     break;
                 case COMMAND_WITHDRAW:
-                    $this->processWithdraw($cmdArr);
+                    $this->processWithdraw($command);
                     break;
                 default:
                     break;
             }
         }
+        $this->return['data']['cmd'] = $command->getCmdFormatted();
         $this->return['data']['sendtime'] = date("Y-m-d H:i:s");
         
         // Save message to database
@@ -158,24 +160,6 @@ class Message extends GloveBase {
         $this->return['data']['status'] = COMMAND_FAILED;
     }
     
-    private function parseCommandFromMsg($cmdArr) {
-        if (count($cmdArr) < 1) {
-            return COMMAND_INVALID;
-        }
-        $cmd = $cmdArr[0];
-        if (in_array($cmd, $GLOBALS['LANG']['cmd_array_charge'])) {
-            return COMMAND_CHARGE;
-        } else if (in_array($cmd, $GLOBALS['LANG']['cmd_array_order'])) {
-            return COMMAND_ORDER;
-        } else if (in_array($cmd, $GLOBALS['LANG']['cmd_array_balance'])) {
-            return COMMAND_BALANCE;
-        } else if (in_array($cmd, $GLOBALS['LANG']['cmd_array_withdraw'])) {
-            return COMMAND_WITHDRAW;
-        } else {
-            return COMMAND_INVALID;
-        }
-    }
-    
     private function loadUser($autoAdd = false) {
         // user_id, user_name, password, reg_time, last_time
         // read user from db, if it's not exist, then create it.
@@ -204,11 +188,7 @@ class Message extends GloveBase {
         return $user;
     }
     
-    private function processCharge($cmdArr) {
-        if (count($cmdArr) < 2 || floatval($cmdArr[1]) <= 0.0) {
-            $this->fillWithInvalidCmd();
-            return false;
-        }
+    private function processCharge($command) {
         // user name and id, amount, req_time, status
         $user = $this->loadUser(true);
         if ($user == false) {
@@ -221,7 +201,7 @@ class Message extends GloveBase {
             $money = array(
                 'user_id'    => $user['user_id'],
                 'user_name'  => $user['user_name'],
-                'amount'     => floatval($cmdArr[1]),
+                'amount'     => $command->getAmount(),
                 'req_source' => 0,
                 'req_time'   => date("Y-m-d H:i:s"),
                 'status'     => 0,
@@ -240,7 +220,7 @@ class Message extends GloveBase {
         return true;
     }
     
-    private function processOrder($cmdArr) {
+    private function processOrder($command) {
         $user = $this->loadUser(false);
         if ($user == false) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
@@ -251,7 +231,7 @@ class Message extends GloveBase {
         return true;
     }
     
-    private function processBalance($cmdArr) {
+    private function processBalance($command) {
         $user = $this->loadUser(false);
         if ($user == false) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
@@ -267,7 +247,7 @@ class Message extends GloveBase {
         return true;
     }
     
-    private function processWithdraw($cmdArr) {
+    private function processWithdraw($command) {
         $user = $this->loadUser(false);
         if ($user == false) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_not_member'];
@@ -275,10 +255,12 @@ class Message extends GloveBase {
             return false;
         }
         
-        $amount = 0.0;
-        if (count($cmdArr) >= 2) {
-            $amount = floatval($cmdArr[1]);
+        $amount = $command->getAmount();
+        if ($amount) {
+            $amount = floatval($amount);
             $amount = abs($amount);
+        } else {
+            $amount = 0.0;
         }
         
         $balance = $this->getUserBalance($user);

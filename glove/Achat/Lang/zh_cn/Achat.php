@@ -20,8 +20,3 @@ $GLOBALS['LANG']['cmd_success'][0] = 'OK，搞定';
 $GLOBALS['LANG']['cmd_success'][1] = 'OK，没问题';
 $GLOBALS['LANG']['cmd_success'][2] = 'OK，收到';
 $GLOBALS['LANG']['cmd_failed'][0] = '稍等，有点忙，一会再发给我吧';
-
-$GLOBALS['LANG']['cmd_array_charge'] = array('学费');
-$GLOBALS['LANG']['cmd_array_order'] = array('课程');
-$GLOBALS['LANG']['cmd_array_balance'] = array('余额');
-$GLOBALS['LANG']['cmd_array_withdraw'] = array('退费');

@@ -118,6 +118,8 @@ class Issue extends GloveBase {
         } else {
             $this->return['success'] = $success;
         }
+        
+        $this->return['data']['nextLaunch'] = $this->getWaitMinutes();
         return true;
     }
     
@@ -181,6 +183,7 @@ class Issue extends GloveBase {
             }
         }
         
+        $this->return['data']['nextLaunch'] = $this->getWaitMinutes();
         return true;
     }
     
@@ -420,4 +423,30 @@ class Issue extends GloveBase {
         
         return true;
     }
+    
+    private function getWaitMinutes() {
+        $default = 5;
+        $nextTime = '';
+        
+        if (isset($this->return['data']['nextIssueTime'])) {
+            $nextTime = $this->return['data']['nextIssueTime'];
+        }
+        
+        if (strlen($nextTime) != strlen('2018-10-10 10:10:10')) {
+            return $default;
+        }
+        
+        $beginTime = time();
+        $endTime = strtotime($nextTime);
+        
+        if ($endTime > $beginTime) {
+            $diff = $endTime - $beginTime;
+            $wait = $diff / 60;
+        } else {
+            $wait = 0;
+        }
+        
+        return $wait;
+    }
+    
 }

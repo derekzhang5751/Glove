@@ -32,12 +32,13 @@ CREATE TABLE `gv_achat_msg` (
   `to_userid` int(10) unsigned NOT NULL DEFAULT '0',
   `to_nick` varchar(128) NOT NULL,
   `msg` varchar(256) NOT NULL DEFAULT '',
+  `cmd` varchar(45) NOT NULL DEFAULT '',
   `recv_time` datetime DEFAULT NULL,
   `reply` varchar(256) NOT NULL DEFAULT '',
   `send_time` datetime DEFAULT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -49,4 +50,4 @@ CREATE TABLE `gv_achat_msg` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-25 16:00:44
+-- Dump completed on 2018-04-28  6:56:39

@@ -16,22 +16,23 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `gv_sessions`
+-- Table structure for table `gv_order`
 --
 
-DROP TABLE IF EXISTS `gv_sessions`;
+DROP TABLE IF EXISTS `gv_order`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `gv_sessions` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `session_key` varchar(45) NOT NULL,
-  `expiry` int(10) unsigned NOT NULL,
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `admin_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `ip` varchar(32) NOT NULL DEFAULT '',
-  `data` varchar(1024) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+CREATE TABLE `gv_order` (
+  `order_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `issue_num` int(10) unsigned NOT NULL,
+  `line` varchar(32) NOT NULL,
+  `value` varchar(32) NOT NULL,
+  `amount` decimal(13,2) NOT NULL,
+  `msg_id` int(10) unsigned NOT NULL,
+  `status` smallint(1) NOT NULL,
+  `add_time` datetime NOT NULL,
+  PRIMARY KEY (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

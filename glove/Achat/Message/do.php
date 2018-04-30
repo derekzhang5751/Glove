@@ -13,13 +13,14 @@ $LifeCfg = array(
     //'SESSION_CLASS'  => 'JiaSession',
     'DB_TYPE'        => 'Medoo',
     'LOAD_DB'        => array(
-        'Message'
+        'Message', 'Order', 'Issue'
     ),
     'LOAD_LIB'       => array(
         'Bricklayer/Lib/network.php',
         'Common/constants.php',
         'Common/GloveBase.php',
-        'Common/Command.php'
+        'Common/Command.php',
+        'Common/Schedule.php'
     )
 );
 

@@ -38,16 +38,21 @@ class WebReport(threading.Thread):
             resp = requests.post(url, data=p, timeout=5.0)
         except requests.exceptions.RequestException:
             return False
-        else:
-            if resp.status_code == requests.codes.ok:
-                # print("Recv: " + resp.text)
+
+        if resp.status_code == requests.codes.ok:
+            try:
+                print("Recv: " + resp.text)
                 j = resp.json()
+            except ValueError:
+                print("Data Error: " + resp.text)
+                return False
+            else:
                 msg.reply = j['data']['reply']
                 msg.sendtime = j['data']['sendtime']
                 msg.status = j['data']['status']
                 return True
-            else:
-                return False
+        else:
+            return False
 
     def run(self):
         self.chat_db = ChatDB(DB_NAME)
@@ -64,8 +69,8 @@ class WebReport(threading.Thread):
                     # from_user = self.chat_db.get_userid_by_nickname(msg.from_nick)
                     from_user = self.chat_db.get_userid_by_msgid(msg.id)
                     reply_text = "@{} {}".format(msg.from_nick, msg.reply)
-                    self.chat_it.send_msg(reply_text, from_user)
-            # self.__exit_flag = True
+                    #self.chat_it.send_msg(reply_text, from_user)
+            self.__exit_flag = True
         # print("Thread is exit.")
         pass
 

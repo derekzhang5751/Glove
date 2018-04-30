@@ -28,6 +28,7 @@ class Command {
     public function __construct($cmd) {
         $this->sourceCmd = trim($cmd, " /\t\n\r\0\x0B");
         $this->cmdFormatted = $this->sourceCmd;
+        $this->cmdType = $this->formatCommand();
     }
     
     public function getCmdFormatted() {

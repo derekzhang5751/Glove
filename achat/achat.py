@@ -79,14 +79,14 @@ def read_all_contact():
 
 
 def test_insert_message():
-    for i in range(1, 4):
+    for i in range(1, 2):
         msg = Message()
         msg.id = 0
         msg.from_user = "@eifvejonvdlrkljrojflsjf"
-        msg.from_nick = "张三"
+        msg.from_nick = "常胜将军"
         msg.to_user = "@ildjflwjfdlsjflds"
         msg.to_nick = "李四"
-        msg.content = "message" + str(i)
+        msg.content = "小，3"
         msg.recvtime = get_cur_time()
         msg.status = 0
         last_id = ChatDB.save_new_message(msg)
@@ -96,7 +96,7 @@ def test_insert_message():
         msg.reply = "success"
         msg.sendtime = get_cur_time()
         msg.status = 2
-        ChatDB.update_reply_message(msg)
+        # ChatDB.update_reply_message(msg)
     pass
 
 
@@ -106,17 +106,18 @@ def main():
     # itchat.set_logging(True, "output.log", logging.DEBUG)
 
     print("=========== 微信演示程序启动 ===========")
-    itchat.auto_login(hotReload=True)
-    ChatDB.delete_all_contacts()
+    # itchat.auto_login(hotReload=True)
+    # ChatDB.delete_all_contacts()
     read_all_contact()
     WebRpt.start()
-    itchat.run()
-    WebRpt.stop()
+    # itchat.run()
+    # WebRpt.stop()
+    WebRpt.join()
     print("=========== 微信演示程序退出 ===========")
     pass
 
 
 if __name__ == '__main__':
+    test_insert_message()
     main()
-    # test_insert_message()
     pass

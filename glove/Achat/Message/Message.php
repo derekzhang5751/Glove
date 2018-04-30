@@ -101,10 +101,15 @@ class Message extends GloveBase {
         $this->return['data']['reply'] = '';
         $this->return['data']['sendtime'] = '';
         $this->return['data']['status'] = $this->status;
+        $this->return['data']['link_id'] = '';
         
         // First, parse command from messasge
         $msg = $this->content;
         $command = new Command($msg);
+        $this->return['data']['cmd'] = $command->getCmdFormatted();
+        $this->return['data']['sendtime'] = date("Y-m-d H:i:s");
+        
+        $schedule = new Schedule();
         
         $cmdType = $command->getCmdType();
         if (COMMAND_INVALID == $cmdType) {
@@ -117,7 +122,7 @@ class Message extends GloveBase {
                     $this->processCharge($command);
                     break;
                 case COMMAND_ORDER:
-                    $this->processOrder($command);
+                    $this->processOrder($command, $schedule);
                     break;
                 case COMMAND_BALANCE:
                     $this->processBalance($command);
@@ -129,11 +134,12 @@ class Message extends GloveBase {
                     break;
             }
         }
-        $this->return['data']['cmd'] = $command->getCmdFormatted();
-        $this->return['data']['sendtime'] = date("Y-m-d H:i:s");
         
         // Save message to database
-        db_message_insert($this->return['data']);
+        $msgId = db_message_insert($this->return['data']);
+        if ($msgId === false) {
+            return false;
+        }
         
         return true;
     }
@@ -220,12 +226,51 @@ class Message extends GloveBase {
         return true;
     }
     
-    private function processOrder($command) {
+    private function processOrder($command, $schedule) {
         $user = $this->loadUser(false);
         if ($user == false) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
+        }
+        
+        $step = $schedule->getCurStep();
+        $issueNum = $schedule->getCurIssueNum();
+        
+        if ($step != STEP_PK10_ORDER && $step != STEP_XYFT_ORDER) {
+            $this->return['data']['reply'] = $GLOBALS['LANG']['error_break_time'];
+            $this->return['data']['status'] = COMMAND_FAILED;
+            return false;
+        }
+        
+        if ($command->getAmount() < 5.0) {
+            $this->return['data']['reply'] = $GLOBALS['LANG']['error_amount_low'];
+            $this->return['data']['status'] = COMMAND_FAILED;
+            return false;
+        }
+        if ($command->getAmount() > 50000.0) {
+            $this->return['data']['reply'] = $GLOBALS['LANG']['error_amount_high'];
+            $this->return['data']['status'] = COMMAND_FAILED;
+            return false;
+        }
+        
+        if ($command->getCmdType() == COMMAND_ORDER) {
+            $orderSn = Message::generate_order_id();
+            $order = array(
+                'order_sn' => $orderSn,
+                'issue_num' => $issueNum,
+                'line' => $command->getLineNum(),
+                'value' => $command->getOrderValue(),
+                'amount' => $command->getAmount(),
+                'status' => 0,
+            );
+            $orderId = db_order_insert($order);
+            if ($orderId === false) {
+                $this->return['data']['reply'] = $GLOBALS['LANG']['error_order'];
+                $this->return['data']['status'] = COMMAND_FAILED;
+                return false;
+            }
+            $this->return['data']['link_id'] = $orderSn;
         }
         
         return true;

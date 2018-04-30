@@ -3,3 +3,5 @@ nbproject
 .idea
 templates_c
 *.pyc
+achat.db
+

@@ -19,7 +19,8 @@ function db_message_insert($msg)
         'recv_time' => $msg['recvtime'],
         'reply' => $msg['reply'],
         'send_time' => $msg['sendtime'],
-        'status' => $msg['status']
+        'status' => $msg['status'],
+        'link_id' => $msg['link_id']
     );
     $stat = $GLOBALS['db']->insert('achat_msg', $data);
     if ($stat->rowCount() == 1) {

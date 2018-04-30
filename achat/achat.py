@@ -105,7 +105,7 @@ def main():
     sys.setdefaultencoding("utf-8")
     # itchat.set_logging(True, "output.log", logging.DEBUG)
 
-    print("=========== 微信演示程序启动 ===========")
+    print("=========== Achat start up ===========")
     # itchat.auto_login(hotReload=True)
     # ChatDB.delete_all_contacts()
     read_all_contact()
@@ -113,7 +113,7 @@ def main():
     # itchat.run()
     # WebRpt.stop()
     WebRpt.join()
-    print("=========== 微信演示程序退出 ===========")
+    print("=========== Achat exit ===========")
     pass
 
 

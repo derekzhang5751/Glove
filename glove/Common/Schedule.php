@@ -79,7 +79,7 @@ class Schedule {
     private function computePk10Issue() {
         $issue = db_get_next_issue(0);
         if ($issue) {
-            $this->issueNum = $issue;
+            $this->issueNum = $issue['issue_num'];
         } else {
             $this->issueNum = '';
         }
@@ -88,7 +88,7 @@ class Schedule {
     private function computeXyftIssue() {
         $issue = db_get_next_issue(1);
         if ($issue) {
-            $this->issueNum = $issue;
+            $this->issueNum = $issue['issue_num'];
         } else {
             $this->issueNum = '';
         }

@@ -7,11 +7,11 @@
 function db_order_insert($order)
 {
     $data = array(
+        'order_sn'   => $order['order_sn'],
         'issue_num'    => $order['issue_num'],
         'line'  => $order['line'],
         'value'     => $order['value'],
         'amount' => $order['amount'],
-        'msg_id'   => $order['msg_id'],
         'status'     => $order['status'],
         'add_time'  => date("Y-m-d H:i:s")
     );

@@ -37,3 +37,24 @@ function db_money_balance($userId)
         return 0.0;
     }
 }
+
+function db_money_insert($money)
+{
+    $data = array(
+        'user_id'    => $money['user_id'],
+        'user_name'  => $money['user_name'],
+        'amount'     => $money['amount'],
+        'balance'  => $money['balance'],
+        'source'  => $money['source'],
+        'add_time'   => $money['add_time'],
+        'status'     => $money['status'],
+        'sn'     => $money['sn'],
+    );
+    $stat = $GLOBALS['db']->insert('money', $data);
+    if ($stat->rowCount() == 1) {
+        return $GLOBALS['db']->id();
+    } else {
+        //exit (var_dump( $GLOBALS['db']->error() ));
+        return false;
+    }
+}

@@ -67,3 +67,14 @@ function db_update_issue($type, $issueNum, $arrayData)
         return false;
     }
 }
+
+function db_get_issue_data($issueNum)
+{
+    $issue = $GLOBALS['db']->get('issues',
+        ['issue_id', 'type', 'issue_num', 'n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'status', 'issue_time', 'real_time'],
+        [
+            'issue_num' => $issueNum
+        ]
+    );
+    return $issue;
+}

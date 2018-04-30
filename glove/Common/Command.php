@@ -17,6 +17,7 @@ class Command {
         '双' => "S"
     );
     private $cmd_array_type_collection = array('Z', 'A', 'D', 'S');
+    private $cmd_array_cancel = array('CANCEL', '取消', '错误');
     
     private $cmdType = COMMAND_INVALID;
     private $cmdFormatted = "";
@@ -77,6 +78,18 @@ class Command {
         $this->sourceCmd = str_replace("。", "/", $this->sourceCmd, $i);
         if ($i > $count) {
             $count = $i;
+        }
+        // For cancel command
+        foreach ($this->cmd_array_cancel as $value) {
+            $pos = strpos($this->sourceCmd, $value);
+            if ($pos !== false) {
+                $this->cmdType = COMMAND_CANCEL;
+                $this->cmdFormatted = $this->cmd_array_cancel[0];
+                break;
+            }
+        }
+        if (COMMAND_CANCEL == $this->cmdType) {
+            return COMMAND_CANCEL;
         }
         // For balance command
         foreach ($this->cmd_array_balance as $value) {
@@ -165,7 +178,11 @@ class Command {
             if ($lineNum === false) {
                 return false;
             } else {
-                $this->orderLineNum = $lineNum;
+                if ($lineNum == 0) {
+                    $this->orderLineNum = 10;
+                } else {
+                    $this->orderLineNum = $lineNum;
+                }
             }
         }
         
@@ -182,7 +199,11 @@ class Command {
                 return false;
             }
         } else {
-            $this->orderValue = $num + 1;
+            if ($num == 0) {
+                $this->orderValue = 10;
+            } else {
+                $this->orderValue = $num;
+            }
         }
         
         // check third part

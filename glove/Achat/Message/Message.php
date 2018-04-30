@@ -130,6 +130,9 @@ class Message extends GloveBase {
                 case COMMAND_WITHDRAW:
                     $this->processWithdraw($command);
                     break;
+                case COMMAND_CANCEL:
+                    $this->processCancel($schedule);
+                    break;
                 default:
                     break;
             }
@@ -271,7 +274,7 @@ class Message extends GloveBase {
                 'amount' => $command->getAmount(),
                 'status' => 0,
             );
-            $orderId = db_order_insert($order);
+            $orderId = db_order_insert($order, $user);
             if ($orderId === false) {
                 $this->return['data']['reply'] = $GLOBALS['LANG']['error_order'];
                 $this->return['data']['status'] = COMMAND_FAILED;
@@ -347,6 +350,27 @@ class Message extends GloveBase {
             $this->fillWithFailedCmd();
         }
         
+        return true;
+    }
+    
+    private function processCancel($schedule) {
+        $user = $this->loadUser(false);
+        if ($user == false) {
+            $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
+            $this->return['data']['status'] = COMMAND_FAILED;
+            return false;
+        }
+        
+        $step = $schedule->getCurStep();
+        $issueNum = $schedule->getCurIssueNum();
+        
+        if ($step != STEP_PK10_ORDER && $step != STEP_XYFT_ORDER) {
+            $this->return['data']['reply'] = $GLOBALS['LANG']['error_break2_time'];
+            $this->return['data']['status'] = COMMAND_FAILED;
+            return false;
+        }
+        
+        db_order_cancel($user['user_id'], $issueNum);
         return true;
     }
     

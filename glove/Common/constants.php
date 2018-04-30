@@ -24,3 +24,4 @@ define('COMMAND_REGISTER',    4);
 define('COMMAND_ORDER',       5);
 define('COMMAND_BALANCE',     6);
 define('COMMAND_WITHDRAW',    7);
+define('COMMAND_CANCEL',      8);

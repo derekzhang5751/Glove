@@ -11,6 +11,7 @@ $GLOBALS['LANG']['error_register']       = '学员注册有点问题，一会再
 $GLOBALS['LANG']['error_not_member']     = '您还不是会员 !!!';
 $GLOBALS['LANG']['error_withdraw']       = '余额不足 !!!';
 $GLOBALS['LANG']['error_break_time']     = '现在是下课时间，不能答题!!!';
+$GLOBALS['LANG']['error_break2_time']    = '现在是下课时间，不能撤销!!!';
 $GLOBALS['LANG']['error_order']          = '答题有错误，一会再试一下吧!!!';
 $GLOBALS['LANG']['error_amount_low']     = '不能小于5!!!';
 $GLOBALS['LANG']['error_amount_high']    = '不能大于50000!!!';

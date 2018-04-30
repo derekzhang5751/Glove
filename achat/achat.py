@@ -86,7 +86,8 @@ def test_insert_message():
         msg.from_nick = "常胜将军"
         msg.to_user = "@ildjflwjfdlsjflds"
         msg.to_nick = "李四"
-        msg.content = "小，300"
+        msg.content = "合，双，200"
+        # msg.content = "取消"
         msg.recvtime = get_cur_time()
         msg.status = 0
         last_id = ChatDB.save_new_message(msg)

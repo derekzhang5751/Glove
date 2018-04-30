@@ -147,7 +147,9 @@ class Issue extends GloveBase {
             );
             $success = db_update_issue($type, $this->issueNum, $arrayData);
             $this->return['success'] = $success;
-            if (!$success) {
+            if ($success) {
+                $this->awards($this->issueNum, $arrayData);
+            } else {
                 //$this->return['msg'] = $GLOBALS['db']->error();
                 $this->return['msg'] = $GLOBALS['db']->last();
             }
@@ -449,4 +451,74 @@ class Issue extends GloveBase {
         return $wait;
     }
     
+    private function awards($issueNum, $issueData=False) {
+        // prepare issue data
+        if (!$issueData) {
+            $issueData = db_get_issue_data($issueNum);
+        }
+        if ($issueData) {
+            if ($issueData['status'] != 1) {
+                return false;
+            }
+            if ($issueData['n0'] == 0 && $issueData['n1'] == 0) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        //
+        $updateSize = 0;
+        $times = 0;
+        do {
+            $updateSize = $this->dispatchAward($issueNum, $issueData);
+            $times = $times + 1;
+            if ($times > 100) {
+                $updateSize = 0;
+                break;
+            }
+        } while ($updateSize > 0);
+        return true;
+    }
+    
+    private function dispatchAward($issueNum, $issueData) {
+        $updateSize = 0;
+        $orders = db_get_order_new($issueNum, 100);
+        if ($orders) {
+            foreach ($orders as $order) {
+                $bingo = $this->isBingo($order, $issueData);
+                // update order status
+                if ($bingo) {
+                    db_update_order_status($order['order_id'], 2);
+                    $amount = $order['amount'];
+                } else {
+                    db_update_order_status($order['order_id'], 1);
+                    $amount = 0 - $order['amount'];
+                }
+                // update user money balance
+                $balance = db_money_balance( $order['user_id'] );
+                $balance = floatval($balance);
+                $balance = $balance + $amount;
+                $money = array(
+                    'user_id'    => $order['user_id'],
+                    'user_name'  => $order['user_name'],
+                    'amount'     => $amount,
+                    'balance'  => $balance,
+                    'source'  => 1,
+                    'add_time'   => $money['add_time'],
+                    'status'     => 0,
+                    'sn'     => $order['order_sn'],
+                );
+                db_money_insert($money);
+                $updateSize = $updateSize + 1;
+            }
+        } else {
+            $updateSize = 0;
+        }
+        return $updateSize;
+    }
+    
+    private function isBingo($order, $issue) {
+        // do something
+        return true;
+    }
 }

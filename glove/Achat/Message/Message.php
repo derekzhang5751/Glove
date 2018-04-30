@@ -205,15 +205,14 @@ class Message extends GloveBase {
         else
         {
             $money = array(
+                'charge_id'  => Message::generate_order_id(),
                 'user_id'    => $user['user_id'],
                 'user_name'  => $user['user_name'],
                 'amount'     => $command->getAmount(),
-                'req_source' => 0,
-                'req_time'   => date("Y-m-d H:i:s"),
                 'status'     => 0,
-                'charge_id'  => Message::generate_order_id()
+                'req_time'   => date("Y-m-d H:i:s"),
             );
-            $moneyId = db_money_insert($money);
+            $moneyId = db_charge_insert($money);
             if ($moneyId) {
                 $reply = $GLOBALS['LANG']['msg_charge'];
                 $reply = $reply . 'http://' . $_SERVER['SERVER_NAME'] . '/Achat/Xufei/do.php?id=' . $money['charge_id'];
@@ -250,6 +249,14 @@ class Message extends GloveBase {
         }
         if ($command->getAmount() > 50000.0) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_amount_high'];
+            $this->return['data']['status'] = COMMAND_FAILED;
+            return false;
+        }
+        
+        $balance = $this->getUserBalance($user);
+        $balance = floatval($balance);
+        if ($command->getAmount() > $balance) {
+            $this->return['data']['reply'] = $GLOBALS['LANG']['e_money_not_enough'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }
@@ -323,15 +330,14 @@ class Message extends GloveBase {
         // Withdraw money
         $amount = 0.0 - $amount;
         $money = array(
+            'charge_id'  => Message::generate_order_id(),
             'user_id'    => $user['user_id'],
             'user_name'  => $user['user_name'],
             'amount'     => $amount,
-            'reg_source' => 0,
-            'req_time'   => date("Y-m-d H:i:s"),
             'status'     => 0,
-            'charge_id'  => Message::generate_order_id()
+            'req_time'   => date("Y-m-d H:i:s"),
         );
-        $moneyId = db_money_insert($money);
+        $moneyId = db_charge_insert($money);
         if ($moneyId) {
             $reply = $GLOBALS['LANG']['msg_withdraw'];
             $reply = $reply . 'http://' . $_SERVER['SERVER_NAME'] . '/Achat/Xufei/do.php?id=' . $money['charge_id'];

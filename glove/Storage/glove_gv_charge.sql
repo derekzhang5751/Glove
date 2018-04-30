@@ -16,23 +16,22 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `gv_order`
+-- Table structure for table `gv_charge`
 --
 
-DROP TABLE IF EXISTS `gv_order`;
+DROP TABLE IF EXISTS `gv_charge`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `gv_order` (
-  `order_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `order_sn` varchar(32) NOT NULL,
-  `issue_num` int(10) unsigned NOT NULL,
-  `line` varchar(32) NOT NULL,
-  `value` varchar(32) NOT NULL,
+CREATE TABLE `gv_charge` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `charge_sn` varchar(32) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `user_name` varchar(64) NOT NULL,
   `amount` decimal(13,2) NOT NULL,
-  `status` smallint(1) NOT NULL,
-  `add_time` datetime NOT NULL,
-  PRIMARY KEY (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+  `status` int(11) NOT NULL,
+  `req_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

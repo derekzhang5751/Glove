@@ -41,7 +41,7 @@ class WebReport(threading.Thread):
 
         if resp.status_code == requests.codes.ok:
             try:
-                print("Recv: " + resp.text)
+                # print("Recv: " + resp.text)
                 j = resp.json()
             except ValueError:
                 print("Data Error: " + resp.text)

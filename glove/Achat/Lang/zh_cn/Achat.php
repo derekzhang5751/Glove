@@ -14,6 +14,7 @@ $GLOBALS['LANG']['error_break_time']     = '现在是下课时间，不能答题
 $GLOBALS['LANG']['error_order']          = '答题有错误，一会再试一下吧!!!';
 $GLOBALS['LANG']['error_amount_low']     = '不能小于5!!!';
 $GLOBALS['LANG']['error_amount_high']    = '不能大于50000!!!';
+$GLOBALS['LANG']['e_money_not_enough']   = '余额不足 !!!';
 
 $GLOBALS['LANG']['msg_charge']       = '请使用这个地址交学费: ';
 $GLOBALS['LANG']['msg_withdraw']     = '请使用这个地址提款: ';

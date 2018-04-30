@@ -28,10 +28,10 @@ CREATE TABLE `gv_money` (
   `user_name` varchar(64) NOT NULL,
   `amount` decimal(13,2) NOT NULL,
   `balance` decimal(13,2) NOT NULL,
-  `req_source` int(11) NOT NULL COMMENT '0 - user request\n1 - order process automatically\n',
-  `req_time` datetime NOT NULL,
-  `status` int(11) NOT NULL,
-  `charge_id` varchar(45) NOT NULL,
+  `source` smallint(1) NOT NULL COMMENT '0 - user request\n1 - order process automatically\n',
+  `add_time` datetime NOT NULL,
+  `status` smallint(1) NOT NULL,
+  `sn` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -45,4 +45,4 @@ CREATE TABLE `gv_money` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-29 21:38:12
+-- Dump completed on 2018-04-30 11:28:05

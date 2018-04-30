@@ -26,3 +26,33 @@ function db_check_admin_password($username, $password)
     );
     return $users;
 }
+
+
+function db_get_user($userName)
+{
+    $user = $GLOBALS['db']->get('user',
+        ['user_id', 'user_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name'],
+        [
+            'user_name' => $userName,
+        ]
+    );
+    return $user;
+}
+
+function db_user_insert($user)
+{
+    $data = array(
+        'user_name'  => $user['user_name'],
+        'password'   => '',
+        'reg_time'   => $user['reg_time'],
+        'last_time'  => $user['last_time'],
+        'achat_name' => $user['achat_name'],
+        'group_name' => $user['group_name']
+    );
+    $stat = $GLOBALS['db']->insert('user', $data);
+    if ($stat->rowCount() == 1) {
+        return $GLOBALS['db']->id();
+    } else {
+        return false;
+    }
+}

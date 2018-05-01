@@ -30,13 +30,17 @@ class WebReport(threading.Thread):
             resp = requests.post(url, data=p, timeout=5.0)
         except requests.exceptions.RequestException:
             return False
-        else:
-            if resp.status_code == requests.codes.ok:
+
+        if resp.status_code == requests.codes.ok:
+            try:
                 # print("MD5 Recv: " + resp.text)
                 j = resp.json()
                 return j
-            else:
+            except ValueError:
+                print("MD5 Error: " + resp.text)
                 return False
+        else:
+            return False
         pass
 
     def http_get(self, url):

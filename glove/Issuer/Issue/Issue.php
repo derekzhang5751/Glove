@@ -502,11 +502,11 @@ class Issue extends GloveBase {
                     'user_id'    => $order['user_id'],
                     'user_name'  => $order['user_name'],
                     'amount'     => $amount,
-                    'balance'  => $balance,
-                    'source'  => 1,
-                    'add_time'   => $money['add_time'],
+                    'balance'    => $balance,
+                    'source'     => 1,
+                    'add_time'   => date("Y-m-d H:i:s"),
                     'status'     => 0,
-                    'sn'     => $order['order_sn'],
+                    'sn'         => $order['order_sn'],
                 );
                 db_money_insert($money);
                 $updateSize = $updateSize + 1;

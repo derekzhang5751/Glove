@@ -63,7 +63,7 @@ class WebReport(threading.Thread):
             count = self.chat_db.read_message(msg_list)
             for i in range(0, count):
                 msg = msg_list[i]
-                print("Process Message [{}] {} {}".format(msg.id, msg.recvtime, msg.content))
+                # print("Process Message [{}] {} {}".format(msg.id, msg.recvtime, msg.content))
                 if self.__http_msg_post(msg):
                     self.chat_db.update_reply_message(msg)
                     # from_user = self.chat_db.get_userid_by_nickname(msg.from_nick)

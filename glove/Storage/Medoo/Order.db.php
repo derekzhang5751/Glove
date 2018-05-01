@@ -47,7 +47,7 @@ function db_order_cancel($userId, $issueNum)
 function db_get_order_new($issueNum, $maxSize)
 {
     $orders = $GLOBALS['db']->select('order',
-        ['order_id', 'order_sn', 'user_id', 'issue_num', 'line', 'value', 'amount', 'status', 'add_time'],
+        ['order_id', 'order_sn', 'user_id', 'user_name', 'issue_num', 'line', 'value', 'amount', 'status', 'add_time'],
         [
             'issue_num' => $issueNum,
             'status' => 0,

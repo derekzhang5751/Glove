@@ -518,7 +518,79 @@ class Issue extends GloveBase {
     }
     
     private function isBingo($order, $issue) {
-        // do something
-        return true;
+        $line = $order['line'];
+        $value = $order['value'];
+        if ($line == '99') {
+            $right = intval($issue['n0']) + intval($issue['n1']);
+        } else {
+            $i = intval($line) - 1;
+            $field = sprintf("n%d", $i);
+            $right = intval($issue[$field]);
+        }
+        return $this->valueJudge($right, $value);
+    }
+    
+    private function valueJudge($right, $value) {
+        $ret = false;
+        switch ($value) {
+            case 'A':
+                $ret = $this->isSmall($right);
+                break;
+            case 'D':
+                $ret = $this->isDouble($right);
+                break;
+            case 'S':
+                $ret = $this->isSingle($right);
+                break;
+            case 'Z':
+                $ret = $this->isBig($right);
+                break;
+            default:
+                $ret = $this->equalNumber($value, $right);
+                break;
+        }
+        return $ret;
+    }
+    
+    private function isBig($value) {
+        $v = intval($value);
+        if ($v >= 6 && $v <= 10) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private function isSmall($value) {
+        $v = intval($value);
+        if ($v >= 1 && $v <= 5) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private function isDouble($value) {
+        $v = intval($value);
+        $arr = array(2, 4, 6, 8, 10);
+        if (in_array($v, $arr, true)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private function isSingle($value) {
+        $v = intval($value);
+        $arr = array(1, 3, 5, 7, 9);
+        if (in_array($v, $arr, true)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private function equalNumber($value, $right) {
+        if (intval($value) === intval($right)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

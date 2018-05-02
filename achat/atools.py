@@ -6,7 +6,7 @@ import hashlib
 
 
 def get_cur_time():
-    r = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+    r = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     return r
 
 

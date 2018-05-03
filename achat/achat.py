@@ -42,18 +42,19 @@ def text_reply(msg):
     print "Actual Nick Name: " + msg.actualNickName
     print "IsAt: " + str(msg.isAt)
     '''
-    if msg.isAt:
-        m = Message()
-        m.id = 0
-        m.from_user = msg.FromUserName
-        m.from_nick = msg.actualNickName
-        m.to_user = msg.ToUserName
-        m.to_nick = ChatDB.get_nickname_by_userid(m.to_user)
-        m.content = msg.Content
-        m.recvtime = get_cur_time()
-        m.status = 0
-        ChatDB.save_new_message(m)
-        # msg.user.send(u'@%s\u2005I received: %s' % (msg.actualNickName, msg.text))
+    # if msg.isAt:
+    print "New Message: " + msg.text
+    m = Message()
+    m.id = 0
+    m.from_user = msg.FromUserName
+    m.from_nick = msg.actualNickName
+    m.to_user = msg.ToUserName
+    m.to_nick = ChatDB.get_nickname_by_userid(m.to_user)
+    m.content = msg.Content
+    m.recvtime = get_cur_time()
+    m.status = 0
+    ChatDB.save_new_message(m)
+    # msg.user.send(u'@%s\u2005I received: %s' % (msg.actualNickName, msg.text))
     pass
 
 
@@ -104,21 +105,21 @@ def test_insert_message():
 def main():
     reload(sys)
     sys.setdefaultencoding("utf-8")
-    # itchat.set_logging(True, "output.log", logging.DEBUG)
+    itchat.set_logging(True, "output.log", logging.DEBUG)
 
     print("=========== Achat start up ===========")
-    # itchat.auto_login(hotReload=True)
-    # ChatDB.delete_all_contacts()
-    read_all_contact()
+    itchat.auto_login(hotReload=True)
+    ChatDB.delete_all_contacts()
+    # read_all_contact()
     WebRpt.start()
-    # itchat.run()
-    # WebRpt.stop()
-    WebRpt.join()
+    itchat.run()
+    WebRpt.stop()
+    # WebRpt.join()
     print("=========== Achat exit ===========")
     pass
 
 
 if __name__ == '__main__':
-    test_insert_message()
+    # test_insert_message()
     main()
     pass

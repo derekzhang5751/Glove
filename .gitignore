@@ -4,3 +4,6 @@ nbproject
 templates_c
 *.pyc
 achat/achat.db
+achat/itchat.pkl
+achat/output.log
+

@@ -73,3 +73,25 @@ function db_update_order_status($orderId, $status)
         return false;
     }
 }
+
+function db_order_win_sum($userId)
+{
+    $sum = $GLOBALS['db']->sum('order', 'amount',
+        [
+            'user_id' => $userId,
+            'status' => 2
+        ]
+    );
+    return $sum;
+}
+
+function db_order_lose_sum($userId)
+{
+    $sum = $GLOBALS['db']->sum('order', 'amount',
+        [
+            'user_id' => $userId,
+            'status' => 1
+        ]
+    );
+    return $sum;
+}

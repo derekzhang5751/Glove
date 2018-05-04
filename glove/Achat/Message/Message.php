@@ -301,7 +301,11 @@ class Message extends GloveBase {
         }
         
         $balance = $this->getUserBalance($user);
+        $win = $this->getUserWinAmount($user);
+        $lost = $this->getUserLoseAmount($user);
+        
         $reply = '余额：' . $balance;
+        $reply = sprintf("\n余额：%.2f\n胜负：%0.2f\n流水：%0.2f", $balance, $win-$lost, $win+$lost);
         $this->return['data']['reply'] = $reply;
         $this->return['data']['status'] = COMMAND_SUCCESS;
         
@@ -399,6 +403,18 @@ class Message extends GloveBase {
         $balance = floatval($balance);
         $format_num = sprintf("%.2f", $balance);
         return $format_num;
+    }
+    
+    private function getUserWinAmount($user) {
+        $userId = $user['user_id'];
+        $win = db_order_win_sum($userId);
+        return floatval($win);
+    }
+    
+    private function getUserLoseAmount($user) {
+        $userId = $user['user_id'];
+        $lose = db_order_lose_sum($userId);
+        return floatval($lose);
     }
     
     public static function generate_order_id() {

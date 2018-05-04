@@ -23,6 +23,34 @@ function db_charge_insert($money)
     }
 }
 
+function db_get_charge_by_sn($sn)
+{
+    $charge = $GLOBALS['db']->get('charge',
+        ['id', 'charge_sn', 'user_id', 'user_name', 'amount', 'status', 'req_time'],
+        [
+            'charge_sn' => $sn,
+        ]
+    );
+    return $charge;
+}
+
+function db_set_charge_status($sn, $status)
+{
+    $state = $GLOBALS['db']->update('charge',
+        [
+            'status' => $status
+        ],
+        [
+            'charge_sn' => $sn
+        ]
+    );
+    if ($state->rowCount() > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function db_money_balance($userId)
 {
     $balance = $GLOBALS['db']->get('money', 'balance',

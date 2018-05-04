@@ -29,6 +29,7 @@ class WebReport(threading.Thread):
             'achat_name': ACHAT_NAME,
             'group_name': "GroupName",
             'from_nick': msg.from_nick,
+            'from_remark': msg.from_remark,
             'to_nick': msg.to_nick,
             'content': msg.content,
             'recvtime': msg.recvtime,

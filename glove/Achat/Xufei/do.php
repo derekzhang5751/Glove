@@ -13,7 +13,7 @@ $LifeCfg = array(
     //'SESSION_CLASS'  => 'JiaSession',
     'DB_TYPE'        => 'Medoo',
     'LOAD_DB'        => array(
-        'Message'
+        'Money'
     ),
     'LOAD_LIB'       => array(
         'Bricklayer/Lib/network.php',

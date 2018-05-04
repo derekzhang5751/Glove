@@ -10,6 +10,7 @@ class Message extends GloveBase {
     private $achat_name;
     private $group_name;
     private $from_nick;
+    private $from_remark;
     private $to_nick;
     private $content;
     private $recvtime;
@@ -30,14 +31,15 @@ class Message extends GloveBase {
         $postData = parent::prepareRequestParams();
         if ($postData) {
             if ($this->version == '1.0') {
-                $_POST['id']        = $postData['id'];
-                $_POST['achat_name'] = $postData['achat_name'];
-                $_POST['group_name'] = $postData['group_name'];
-                $_POST['from_nick'] = $postData['from_nick'];
-                $_POST['to_nick']   = $postData['to_nick'];
-                $_POST['content']   = $postData['content'];
-                $_POST['recvtime']  = $postData['recvtime'];
-                $_POST['status']    = $postData['status'];
+                $_POST['id']          = $postData['id'];
+                $_POST['achat_name']  = $postData['achat_name'];
+                $_POST['group_name']  = $postData['group_name'];
+                $_POST['from_nick']   = $postData['from_nick'];
+                $_POST['from_remark'] = $postData['from_remark'];
+                $_POST['to_nick']     = $postData['to_nick'];
+                $_POST['content']     = $postData['content'];
+                $_POST['recvtime']    = $postData['recvtime'];
+                $_POST['status']      = $postData['status'];
             }
         } else {
             return false;
@@ -63,6 +65,8 @@ class Message extends GloveBase {
         if ( empty($this->from_nick) ) {
             return false;
         }
+        
+        $this->from_remark = isset($_POST['from_remark']) ? trim($_POST['from_remark']) : '';
         
         $this->to_nick = isset($_POST['to_nick']) ? trim($_POST['to_nick']) : '';
         /*if ( empty($this->to_nick) ) {
@@ -94,6 +98,7 @@ class Message extends GloveBase {
         $this->return['data']['achat_name'] = $this->achat_name;
         $this->return['data']['group_name'] = $this->group_name;
         $this->return['data']['from_nick'] = $this->from_nick;
+        $this->return['data']['from_remark'] = $this->from_remark;
         $this->return['data']['to_nick'] = $this->to_nick;
         $this->return['data']['content'] = $this->content;
         $this->return['data']['cmd'] = '';
@@ -172,14 +177,15 @@ class Message extends GloveBase {
     private function loadUser($autoAdd = false) {
         // user_id, user_name, password, reg_time, last_time
         // read user from db, if it's not exist, then create it.
-        $user = db_get_user($this->from_nick);
+        $user = db_get_user($this->from_remark);
         if (!$user) {
             if ($autoAdd) {
                 // create a new user account
                 $cur_time = date("Y-m-d H:i:s");
                 $user = array(
                     'user_id'    => 0,
-                    'user_name'  => $this->from_nick,
+                    'user_name'  => $this->from_remark,
+                    'nick_name'  => $this->from_nick,
                     'password'   => '',
                     'reg_time'   => $cur_time,
                     'last_time'  => $cur_time,

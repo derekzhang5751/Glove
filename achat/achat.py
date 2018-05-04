@@ -58,27 +58,6 @@ def text_reply(msg):
     pass
 
 
-def read_all_contact():
-    contact_list = itchat.get_contact()
-    for c in contact_list:
-        contact = Contact()
-        contact.id = 0
-        contact.achat_name = ACHAT_NAME
-        contact.uin = c.Uin
-        contact.user_name = c.UserName
-        contact.nick_name = c.NickName
-        contact.remark_name = c.RemarkName
-        contact.flag = c.ContactFlag
-        contact.member_count = c.MemberCount
-        contact.sex = c.Sex
-        contact.signature = c.Signature
-        contact.isowner = c.IsOwner
-
-        last_id = ChatDB.save_new_contact(contact)
-        print("Contact ID inserted is " + str(last_id))
-    pass
-
-
 def test_insert_message():
     for i in range(1, 2):
         msg = Message()
@@ -110,7 +89,6 @@ def main():
     print("=========== Achat start up ===========")
     itchat.auto_login(hotReload=True)
     ChatDB.delete_all_contacts()
-    # read_all_contact()
     WebRpt.start()
     itchat.run()
     WebRpt.stop()
@@ -120,6 +98,5 @@ def main():
 
 
 if __name__ == '__main__':
-    # test_insert_message()
     main()
     pass

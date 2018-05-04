@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div>Charge ID: {$ChargeId}</div>
+        <div>充值单号: {$ChargeId}</div>
+        <div>会员昵称: {$UserName}</div>
+        <div>充值金额: {$ChargeAmount}</div>
+        <div>{$Message}</div>
     </body>
 </html>

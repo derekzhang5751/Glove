@@ -7,7 +7,7 @@
 function db_get_user_list()
 {
     $users = $GLOBALS['db']->select('user',
-        ['user_id', 'user_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name'],
+        ['user_id', 'user_name', 'nick_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name'],
         [
             'ORDER' => ['user_id' => 'ASC']
         ]
@@ -31,7 +31,7 @@ function db_check_admin_password($username, $password)
 function db_get_user($userName)
 {
     $user = $GLOBALS['db']->get('user',
-        ['user_id', 'user_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name'],
+        ['user_id', 'user_name', 'nick_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name'],
         [
             'user_name' => $userName,
         ]
@@ -43,6 +43,7 @@ function db_user_insert($user)
 {
     $data = array(
         'user_name'  => $user['user_name'],
+        'nick_name'  => $user['nick_name'],
         'password'   => '',
         'reg_time'   => $user['reg_time'],
         'last_time'  => $user['last_time'],

@@ -61,17 +61,18 @@ class ChatDB(object):
         if self.__table_exist(table_name):
             return
         c = self.__conn.cursor()
-        c.execute('''CREATE TABLE {} (id INTEGER PRIMARY KEY, from_user TEXT, from_nick TEXT, to_user TEXT, to_nick TEXT,
-                content TEXT, recvtime TEXT, reply TEXT, sendtime TEXT, status INTEGER)'''.format(table_name))
+        c.execute('''CREATE TABLE {} (id INTEGER PRIMARY KEY, from_user TEXT, from_nick TEXT, from_remark TEXT,
+                to_user TEXT, to_nick TEXT,content TEXT, recvtime TEXT, reply TEXT, sendtime TEXT,
+                status INTEGER)'''.format(table_name))
         self.__conn.commit()
         pass
 
     def save_new_message(self, msg):
         table_name = self.__tableMessageName
         c = self.__conn.cursor()
-        p = (msg.from_user, msg.from_nick, msg.to_user, msg.to_nick, msg.content, msg.recvtime)
-        c.execute('''INSERT INTO {} (from_user,from_nick,to_user,to_nick,content,recvtime,reply,sendtime,status) 
-                VALUES (?, ?, ?, ?, ?, ?, '', '', 0)'''.format(table_name), p)
+        p = (msg.from_user, msg.from_nick, msg.from_remark, msg.to_user, msg.to_nick, msg.content, msg.recvtime)
+        c.execute('''INSERT INTO {} (from_user,from_nick,from_remark,to_user,to_nick,content,recvtime,reply,sendtime,status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, '', '', 0)'''.format(table_name), p)
         self.__conn.commit()
         return c.lastrowid
 
@@ -103,7 +104,7 @@ class ChatDB(object):
     def read_message(self, msg_list):
         count = 0
         c = self.__conn.cursor()
-        c.execute("SELECT id,from_user,from_nick,to_user,to_nick,content,recvtime,reply,sendtime,status FROM message WHERE status=0 ORDER BY id LIMIT 5")
+        c.execute("SELECT id,from_user,from_nick,from_remark,to_user,to_nick,content,recvtime,reply,sendtime,status FROM message WHERE status=0 ORDER BY id LIMIT 5")
         rows = c.fetchall()
         if not rows:
             return count
@@ -112,13 +113,14 @@ class ChatDB(object):
             msg.id        = row[0]
             msg.from_user = row[1]
             msg.from_nick = row[2]
-            msg.to_user   = row[3]
-            msg.to_nick   = row[4]
-            msg.content   = row[5]
-            msg.recvtime  = row[6]
-            msg.reply     = row[7]
-            msg.sendtime  = row[8]
-            msg.status    = row[9]
+            msg.from_remark = row[3]
+            msg.to_user   = row[4]
+            msg.to_nick   = row[5]
+            msg.content   = row[6]
+            msg.recvtime  = row[7]
+            msg.reply     = row[8]
+            msg.sendtime  = row[9]
+            msg.status    = row[10]
             msg_list.append(msg)
             count = count + 1
             print("read message id " + str(msg.id))

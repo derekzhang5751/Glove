@@ -21,6 +21,7 @@ class Message(object):
     id = 0
     from_user = ""
     from_nick = ""
+    from_remark = ""
     to_user = ""
     to_nick = ""
     content = ""

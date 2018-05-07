@@ -57,3 +57,16 @@ function db_user_insert($user)
         return false;
     }
 }
+
+function db_get_users_by_group($achat, $group)
+{
+    $users = $GLOBALS['db']->select('user',
+        ['user_id', 'user_name', 'nick_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name'],
+        [
+            'achat_name' => $achat,
+            'group_name' => $group,
+            'ORDER' => ['user_id' => 'ASC']
+        ]
+    );
+    return $users;
+}

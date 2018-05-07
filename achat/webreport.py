@@ -27,7 +27,7 @@ class WebReport(threading.Thread):
         msg_struct = {
             'id': msg.id,
             'achat_name': ACHAT_NAME,
-            'group_name': "GroupName",
+            'group_name': GROUP_NAME,
             'from_nick': msg.from_nick,
             'from_remark': msg.from_remark,
             'to_nick': msg.to_nick,
@@ -67,7 +67,7 @@ class WebReport(threading.Thread):
         chatrooms = self.chat_it.get_chatrooms()
         for chatroom in chatrooms:
             # print("Chatroom userName: {}".format(chatroom.userName))
-            if chatroom.nickName == ROOM_NAME:
+            if chatroom.nickName == GROUP_NAME:
                 # print("chatroom nickName: {} is my room".format(chatroom.nickName))
                 self.room_name = chatroom.userName
                 self.room_nick = chatroom.nickName
@@ -75,7 +75,7 @@ class WebReport(threading.Thread):
                 # print("chatroom nickName: {} is not my room".format(chatroom.nickName))
                 pass
         # init contacts
-        chat_room = self.chat_it.update_chatroom(self.room_name, detailedMember = True)
+        chat_room = self.chat_it.update_chatroom(self.room_name, detailedMember=True)
         for friend in chat_room['MemberList']:
             c = self.chat_it.search_friends(userName=friend['UserName'])
             # print("UserName: {}".format(c['UserName']))

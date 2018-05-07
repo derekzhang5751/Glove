@@ -95,3 +95,17 @@ function db_order_lose_sum($userId)
     );
     return $sum;
 }
+
+function db_get_order_for_verify($userId, $issueNum)
+{
+    $orders = $GLOBALS['db']->select('order',
+        ['order_id', 'order_sn', 'user_id', 'user_name', 'issue_num', 'line', 'value', 'amount', 'status', 'add_time'],
+        [
+            'user_id' => $userId,
+            'issue_num' => $issueNum,
+            'status' => 0,
+            'LIMIT' => 100
+        ]
+    );
+    return $orders;
+}

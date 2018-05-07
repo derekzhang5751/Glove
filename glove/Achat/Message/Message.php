@@ -384,19 +384,6 @@ class Message extends GloveBase {
         return true;
     }
     
-    private function stringToArray($str) {
-        $a = array();
-        $tok = strtok($str, ", /");
-        while ($tok !== false) {
-            $s = trim($tok);
-            if ( !empty($s) ) {
-                array_push($a, $s);
-            }
-            $tok = strtok(", /");
-        }
-        return $a;
-    }
-    
     private function getUserBalance($user) {
         $userId = $user['user_id'];
         $balance = db_money_balance($userId);

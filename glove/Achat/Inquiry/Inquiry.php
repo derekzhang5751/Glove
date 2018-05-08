@@ -8,6 +8,7 @@ class Inquiry extends GloveBase {
     private $action = '';
     private $achatName = '';
     private $groupName = '';
+    private $issueNum = '';
     
     private $return = [
         'success' => true,
@@ -27,6 +28,7 @@ class Inquiry extends GloveBase {
                 $_POST['action']     = $postData['action'];
                 $_POST['achat_name'] = $postData['achat_name'];
                 $_POST['group_name'] = $postData['group_name'];
+                $_POST['issue_num']  = isset($postData['issue_num']) ? $postData['issue_num'] : '';
             }
         } else {
             return false;
@@ -46,6 +48,8 @@ class Inquiry extends GloveBase {
         if ( empty($this->groupName) ) {
             return false;
         }
+        
+        $this->issueNum = trim($_POST['issue_num']);
         
         return true;
     }
@@ -68,21 +72,26 @@ class Inquiry extends GloveBase {
     }
     
     private function doVerify() {
+        $ret = array(
+            'issue_num' => '',
+            'user_list' => array()
+        );
         $type = $this->getCurrentLotteryType();
         $nextIssue = db_get_next_issue($type);
         if ($nextIssue) {
             $issueNum = $nextIssue['issue_num'];
+            $ret['issue_num'] = $issueNum;
         } else {
-            return false;
+            return $ret;
         }
+        
         // get all members in the group
         $users = db_get_users_by_group($this->achatName, $this->groupName);
-        $ret = array();
+        
         // get all orders of member
         foreach ($users as $user) {
             $us = array(
                 'nick_name' => $user['nick_name'],
-                'issue_num' => $issueNum,
                 'balance' => $this->getUserBalance($user),
                 'orders' => array()
             );
@@ -95,18 +104,38 @@ class Inquiry extends GloveBase {
             }
             
             $us['orders'] = $od;
-            array_push($ret, $us);
+            array_push($ret['user_list'], $us);
         }
         
         return $ret;
     }
     
     private function doRelease() {
+        $ret = array(
+            'issue_num' => '',
+            'user_list' => array()
+        );
+        if (empty($this->issueNum)) {
+            return $ret;
+        } else {
+            $ret['issue_num'] = $this->issueNum;
+        }
+        
         // get all members in the group
+        $users = db_get_users_by_group($this->achatName, $this->groupName);
         
         // get all won orders of member
+        foreach ($users as $user) {
+            $orders = db_get_order_for_won($user['user_id'], $issueNum);
+            $od = array();
+            foreach ($orders as $order) {
+                $strOrder = $this->stringOrder($order);
+                $str = '('.$user['nick_name'].')'.$strOrder.'=XXX';
+                array_push($ret['user_list'], $str);
+            }
+        }
         
-        $this->return['success'] = COMMAND_SUCCESS;
+        return $ret;
     }
     
     private function getCurrentLotteryType() {

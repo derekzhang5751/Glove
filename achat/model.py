@@ -29,3 +29,8 @@ class Message(object):
     reply = ""
     sendtime = ""
     status = 0
+
+class Inquiry(object):
+    action = ""
+    issue_num = ""
+    user_list = []

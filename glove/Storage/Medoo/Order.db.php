@@ -109,3 +109,17 @@ function db_get_order_for_verify($userId, $issueNum)
     );
     return $orders;
 }
+
+function db_get_order_for_won($userId, $issueNum)
+{
+    $orders = $GLOBALS['db']->select('order',
+        ['order_id', 'order_sn', 'user_id', 'user_name', 'issue_num', 'line', 'value', 'amount', 'status', 'add_time'],
+        [
+            'user_id' => $userId,
+            'issue_num' => $issueNum,
+            'status' => 2,
+            'LIMIT' => 100
+        ]
+    );
+    return $orders;
+}

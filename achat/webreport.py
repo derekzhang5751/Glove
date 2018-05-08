@@ -6,8 +6,7 @@ from storage import ChatDB
 from config import *
 from atools import *
 from schedule import *
-from model import Contact
-from pprint import pprint
+from model import Contact, Inquiry
 
 
 class WebReport(threading.Thread):
@@ -16,6 +15,7 @@ class WebReport(threading.Thread):
     chat_it = None
     room_name = ''
     room_nick = ''
+    issue_num = ''
 
     def __init__(self, it):
         threading.Thread.__init__(self)
@@ -56,6 +56,38 @@ class WebReport(threading.Thread):
                 msg.reply = j['data']['reply']
                 msg.sendtime = j['data']['sendtime']
                 msg.status = j['data']['status']
+                return True
+        else:
+            return False
+
+    def __http_inquiry_post(self, inquiry):
+        url = "http://" + SERVER_HOST + "/Achat/Inquiry/do.php"
+        msg_struct = {
+            'action': inquiry.action,
+            'achat_name': ACHAT_NAME,
+            'group_name': GROUP_NAME,
+            'issue_num': inquiry.issue_num
+        }
+        data = json.dumps(msg_struct)
+        base64_str = base64.b64encode(data)
+        md5 = get_md5_value(base64_str + MD5_KEY)
+        # print("Md5: " + md5)
+        p = {'version': '1.0', 'DeviceType': '1', 'md5': md5, 'data': base64_str}
+        try:
+            resp = requests.post(url, data=p, timeout=5.0)
+        except requests.exceptions.RequestException:
+            return False
+
+        if resp.status_code == requests.codes.ok:
+            try:
+                # print("Recv: " + resp.text)
+                j = resp.json()
+            except ValueError:
+                print("Data Error: " + resp.text)
+                return False
+            else:
+                inquiry.issue_num = j['data']['issue_num']
+                inquiry.user_list = j['data']['user_list']
                 return True
         else:
             return False
@@ -143,13 +175,36 @@ class WebReport(threading.Thread):
     def do_check(self):
         print("[{}]Check ...".format(time.strftime("%H:%M:%S", time.localtime())))
         to_user = self.room_name
-        self.chat_it.send_msg(STR_CHECK, to_user)
+        inquiry = Inquiry()
+        inquiry.action = 'verify'
+        inquiry.issue_num = ''
+        if self.__http_inquiry_post(inquiry):
+            self.issue_num = inquiry.issue_num
+            # self.chat_it.send_msg(STR_CHECK, to_user)
+            msg = STR_CHECK
+            for user in inquiry.user_list:
+                # time.sleep(0.5)
+                msg = msg + "\n\n({})积分：{}".format(user.nick_name, user.balance)
+                for order in user.orders:
+                    msg = msg + "\n" + order
+            self.chat_it.send_msg(msg, to_user)
+        else:
+            self.chat_it.send_msg(STR_CHECK, to_user)
         pass
 
     def do_issue(self):
         print("[{}]Issue ...".format(time.strftime("%H:%M:%S", time.localtime())))
         to_user = self.room_name
-        self.chat_it.send_msg(STR_ISSUE, to_user)
+        inquiry = Inquiry()
+        inquiry.action = 'result'
+        inquiry.issue_num = self.issue_num
+        if self.__http_inquiry_post(inquiry):
+            msg = STR_ISSUE
+            for item in inquiry.user_list:
+                msg = msg + "\n" + item
+            self.chat_it.send_msg(msg, to_user)
+        else:
+            self.chat_it.send_msg(STR_ISSUE, to_user)
         pass
 
     def run(self):

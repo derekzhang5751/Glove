@@ -4,10 +4,19 @@
 
 
 DB_NAME = "achat.db"
+
+# For Development
 ACHAT_NAME = "机器人001"
 GROUP_NAME = "内部群1"
 MD5_KEY = "ikenviWCkkiCvk8834701lfkdjfd"
 SERVER_HOST = "glove.loc"
+
+# For Product
+# DB_NAME = "achat.db"
+# ACHAT_NAME = "机器人002"
+# GROUP_NAME = "内部群1"
+# MD5_KEY = "ikenviWCkkiCvk8834701lfkdjfd"
+# SERVER_HOST = "205.209.167.174:8089"
 
 STR_LAST_TERM = '上期回顾\n具体内容在开发中...'
 STR_WELCOME = '近期骗子很多，我们财务不主动加人，主动加你们的都是骗子\n欢迎大家玩的开心\n注：请注意自己下的注，7个以上的后台没结流水，无需纠结！'

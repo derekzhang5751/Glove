@@ -7,7 +7,7 @@ DB_NAME = "achat.db"
 
 # For Development
 ACHAT_NAME = "机器人001"
-GROUP_NAME = "内部群1"
+GROUP_NAME = "内部群2"
 MD5_KEY = "ikenviWCkkiCvk8834701lfkdjfd"
 SERVER_HOST = "glove.loc"
 

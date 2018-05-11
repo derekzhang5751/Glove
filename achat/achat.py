@@ -48,6 +48,7 @@ def text_reply(msg):
     m.id = 0
     m.from_user = msg.FromUserName
     m.from_nick = msg.actualNickName
+    m.from_remark = ChatDB.get_remark_by_userid(m.from_user)
     m.to_user = msg.ToUserName
     m.to_nick = ChatDB.get_nickname_by_userid(m.to_user)
     m.content = msg.Content

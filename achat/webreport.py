@@ -80,7 +80,7 @@ class WebReport(threading.Thread):
 
         if resp.status_code == requests.codes.ok:
             try:
-                # print("Recv: " + resp.text)
+                print("Inquiry Recv: " + resp.text)
                 j = resp.json()
             except ValueError:
                 print("Data Error: " + resp.text)
@@ -135,14 +135,14 @@ class WebReport(threading.Thread):
 
     def do_last_term(self):
         print("[{}]Last Term ...".format(time.strftime("%H:%M:%S", time.localtime())))
-        to_user = self.room_name
-        self.chat_it.send_msg(STR_LAST_TERM, to_user)
+        # to_user = self.room_name
+        # self.chat_it.send_msg(STR_LAST_TERM, to_user)
         pass
 
     def do_welcome(self):
         print("[{}]Welcome ...".format(time.strftime("%H:%M:%S", time.localtime())))
-        to_user = self.room_name
-        self.chat_it.send_msg(STR_WELCOME, to_user)
+        # to_user = self.room_name
+        # self.chat_it.send_msg(STR_WELCOME, to_user)
         pass
 
     def do_order(self):
@@ -154,22 +154,22 @@ class WebReport(threading.Thread):
             print("Process Message [{}] {} {}".format(msg.id, msg.recvtime, msg.content))
             if self.__http_msg_post(msg):
                 self.chat_db.update_reply_message(msg)
-                # from_user = self.chat_db.get_userid_by_nickname(msg.from_nick)
-                from_user = self.chat_db.get_userid_by_msgid(msg.id)
-                reply_text = "@{} {}".format(msg.from_nick, msg.reply)
-                self.chat_it.send_msg(reply_text, from_user)
+                #### from_user = self.chat_db.get_userid_by_nickname(msg.from_nick)
+                # from_user = self.chat_db.get_userid_by_msgid(msg.id)
+                # reply_text = "@{} {}".format(msg.from_nick, msg.reply)
+                # self.chat_it.send_msg(reply_text, from_user)
         pass
 
     def do_end_tip(self):
         print("[{}]End tip ...".format(time.strftime("%H:%M:%S", time.localtime())))
-        to_user = self.room_name
-        self.chat_it.send_msg(STR_END_TIP, to_user)
+        # to_user = self.room_name
+        # self.chat_it.send_msg(STR_END_TIP, to_user)
         pass
 
     def do_end(self):
         print("[{}]End ...".format(time.strftime("%H:%M:%S", time.localtime())))
-        to_user = self.room_name
-        self.chat_it.send_msg(STR_END, to_user)
+        # to_user = self.room_name
+        # self.chat_it.send_msg(STR_END, to_user)
         pass
 
     def do_check(self):
@@ -184,12 +184,13 @@ class WebReport(threading.Thread):
             msg = STR_CHECK
             for user in inquiry.user_list:
                 # time.sleep(0.5)
-                msg = msg + "\n\n({})积分：{}".format(user.nick_name, user.balance)
-                for order in user.orders:
+                msg = msg + "\n\n({})积分：{}".format(user['nick_name'], user['balance'])
+                # msg = msg + "\n\n(昵称)积分：1"
+                for order in user['orders']:
                     msg = msg + "\n" + order
-            self.chat_it.send_msg(msg, to_user)
-        else:
-            self.chat_it.send_msg(STR_CHECK, to_user)
+            # self.chat_it.send_msg(msg, to_user)
+        # else:
+            # self.chat_it.send_msg(STR_CHECK, to_user)
         pass
 
     def do_issue(self):
@@ -202,9 +203,9 @@ class WebReport(threading.Thread):
             msg = STR_ISSUE
             for item in inquiry.user_list:
                 msg = msg + "\n" + item
-            self.chat_it.send_msg(msg, to_user)
-        else:
-            self.chat_it.send_msg(STR_ISSUE, to_user)
+            # self.chat_it.send_msg(msg, to_user)
+        # else:
+            # self.chat_it.send_msg(STR_ISSUE, to_user)
         pass
 
     def run(self):
@@ -226,20 +227,20 @@ class WebReport(threading.Thread):
 
             if step == STEP_INIT_ENV:
                 self.do_init_env()
-            elif step == STEP_LAST_TERM:
-                self.do_last_term()
-            elif step == STEP_WELCOME:
-                self.do_welcome()
+            # elif step == STEP_LAST_TERM:
+            #    self.do_last_term()
+            # elif step == STEP_WELCOME:
+            #    self.do_welcome()
             # elif step == STEP_CLASS:
-            #     self.do_order()
-            elif step == STEP_END_TIP:
-                self.do_end_tip()
-            elif step == STEP_END:
-                self.do_end()
-            elif step == STEP_CHECK:
-                self.do_check()
-            elif step == STEP_ISSUE:
-                self.do_issue()
+            #    self.do_order()
+            # elif step == STEP_END_TIP:
+            #    self.do_end_tip()
+            # elif step == STEP_END:
+            #    self.do_end()
+            # elif step == STEP_CHECK:
+            #    self.do_check()
+            # elif step == STEP_ISSUE:
+            #    self.do_issue()
             else:
                 time.sleep(1)
 

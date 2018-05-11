@@ -6,4 +6,5 @@ templates_c
 achat/achat.db
 achat/itchat.pkl
 achat/output.log
-
+achat/achat001.db
+achat/QR.png

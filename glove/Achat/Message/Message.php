@@ -224,7 +224,7 @@ class Message extends GloveBase {
             $moneyId = db_charge_insert($money);
             if ($moneyId) {
                 $reply = $GLOBALS['LANG']['msg_charge'];
-                $reply = $reply . 'http://' . $_SERVER['SERVER_NAME'] . '/Achat/Xufei/do.php?id=' . $money['charge_id'];
+                $reply = $reply . 'http://' . $_SERVER['SERVER_NAME'] . ':8089/Achat/Xufei/do.php?id=' . $money['charge_id'];
                 $this->return['data']['reply'] = $reply;
                 $this->return['data']['status'] = COMMAND_SUCCESS;
             } else {

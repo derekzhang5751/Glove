@@ -138,6 +138,16 @@ class ChatDB(object):
         else:
             return row[0]
 
+    def get_remark_by_userid(self, user_id):
+        c = self.__conn.cursor()
+        p = (str(user_id),)
+        c.execute("SELECT remark_name FROM contacts WHERE user_name=?", p)
+        row = c.fetchone()
+        if row is None:
+            return ""
+        else:
+            return row[0]
+
     def get_userid_by_nickname(self, nick_name):
         c = self.__conn.cursor()
         p = (str(nick_name),)

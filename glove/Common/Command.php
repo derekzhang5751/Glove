@@ -115,6 +115,7 @@ class Command {
                 $amount = $this->parseAmount($strLeft);
                 if ($amount > 0.0) {
                     $this->cmdType = COMMAND_CHARGE;
+                    $this->orderAmount = $amount;
                     $this->cmdFormatted = $this->cmd_array_charge[0].'/'.$amount;
                     break;
                 }
@@ -131,6 +132,7 @@ class Command {
                 $amount = $this->parseAmount($strLeft);
                 if ($amount > 0.0) {
                     $this->cmdType = COMMAND_WITHDRAW;
+                    $this->orderAmount = $amount;
                     $this->cmdFormatted = $this->cmd_array_withdraw[0].'/'.$amount;
                     break;
                 }

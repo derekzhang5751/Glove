@@ -1,6 +1,7 @@
 package com.hb.achat.achatassistant;
 
 import android.accessibilityservice.AccessibilityService;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ public class AAService extends AccessibilityService {
     private String mGroupName = "内部群2";
     private List<Message> mMessageList = new ArrayList<>();
     private int mIndex = 0;
+    private AchatDatabase mAppDb = null;
 
     public AAService() {
     }
@@ -49,8 +51,11 @@ public class AAService extends AccessibilityService {
 
     @Override
     public void onServiceConnected() {
-        showToastMessage("服务已连接");
         super.onServiceConnected();
+        showToastMessage("服务已连接");
+        if (mAppDb == null) {
+            mAppDb = Room.databaseBuilder(getApplicationContext(), AchatDatabase.class, "achat.db").build();
+        }
     }
 
     @Override

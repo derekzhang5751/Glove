@@ -3,8 +3,7 @@ package com.hb.achat.achatassistant;
 import android.accessibilityservice.AccessibilityService;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
+import android.os.Handler;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -13,10 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AAService extends AccessibilityService {
-    private String mGroupName = "内部群2";
+    private String mGroupName = Tools.GROUP_NAME;
     private List<Message> mMessageList = new ArrayList<>();
-    private int mIndex = 0;
-    private AchatDatabase mAppDb = null;
+    //private int mIndex = 0;
+
+    private AchatDatabase mAppDb;
+    private AchatDao mAchatDao;
+    private WebReport mWebReport;
 
     public AAService() {
     }
@@ -24,7 +26,7 @@ public class AAService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         int eventType = event.getEventType();
-        String msg = "";
+        //String msg = "";
         switch (eventType) {
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 refreshMessageInGroup();
@@ -45,21 +47,44 @@ public class AAService extends AccessibilityService {
     }
 
     @Override
-    public void onInterrupt() {
-        showToastMessage("我要被终结啦！！！");
-    }
-
-    @Override
     public void onServiceConnected() {
         super.onServiceConnected();
         showToastMessage("服务已连接");
         if (mAppDb == null) {
             mAppDb = Room.databaseBuilder(getApplicationContext(), AchatDatabase.class, "achat.db").build();
+            mAchatDao = mAppDb.getAchatDao();
         }
+        initMessageList();
+        // start up web report thread
+        WebReport.ThreadParameter tp = new WebReport.ThreadParameter();
+        tp.mAchatDao = mAchatDao;
+        tp.mHandle = mHandle;
+        mWebReport = new WebReport(tp);
+        mWebReport.start();
+    }
+
+    @Override
+    public void onInterrupt() {
+        if (mAppDb != null) {
+            mAchatDao = null;
+            mAppDb.close();
+            mAppDb = null;
+        }
+        mWebReport.stop();
+        mWebReport = null;
+        showToastMessage("我要被终结啦！！！");
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        if (mAppDb != null) {
+            mAchatDao = null;
+            mAppDb.close();
+            mAppDb = null;
+        }
+        mWebReport.stop();
+        mWebReport = null;
+
         showToastMessage("服务被关闭");
         return super.onUnbind(intent);
     }
@@ -70,16 +95,23 @@ public class AAService extends AccessibilityService {
 
     private void refreshMessageInGroup() {
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-        if (isTargetGroupByName(rootNode)) {
+        if (AchatLayout.isTargetGroupByName(rootNode, mGroupName)) {
             //showToastMessage("已打开服务页面");
-            mMessageList.clear();
-            getMessageList(rootNode);
-            String str = "";
-            for (int i=0; i<mMessageList.size(); i++) {
-                Message msg = mMessageList.get(i);
-                str = str + "[" + msg.fromUserRemark + "] says [" + msg.content + "]\n";
+            List<Message> msgList = new ArrayList<>();
+            AchatLayout.fetchMessageList(rootNode, msgList);
+
+            if (msgList.size() > 0) {
+                List<Message> newList = new ArrayList<>();
+                Tools.getNewMessageList(msgList, mMessageList, newList);
+
+                String str = "";
+                for (int i=0; i<newList.size(); i++) {
+                    Message msg = newList.get(i);
+                    mAchatDao.insertMessage(msg);
+                    str = str + "[" + msg.fromUserRemark + "] says [" + msg.content + "]\n";
+                }
+                showToastMessage(str);
             }
-            showToastMessage(str);
 
             /*mIndex++;
             if (mIndex < 1) {
@@ -89,134 +121,10 @@ public class AAService extends AccessibilityService {
         }
     }
 
-    private boolean isTargetGroupByName(AccessibilityNodeInfo node) {
-        String groupName = "";
-
-        for (int i=0; i<node.getChildCount(); i++) {
-            AccessibilityNodeInfo subNode = node.getChild(i);
-            if (subNode == null) {
-                continue;
-            }
-            if ("android.widget.TextView".equals(subNode.getClassName().toString())) {
-                if (!TextUtils.isEmpty(subNode.getText())) {
-                    groupName = subNode.getText().toString();
-                    if (groupName.contains(mGroupName)) {
-                        //String str = "TextView: " + groupName;
-                        //showToastMessage(str);
-                        return true;
-                    }
-                }
-            }
-
-            if (isTargetGroupByName(subNode)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void getMessageList(AccessibilityNodeInfo node) {
-        String viewId = "com.tencent.mm:id/p";  // "com.tencent.mm:id/if";
-        List<AccessibilityNodeInfo> msgNodeList = node.findAccessibilityNodeInfosByViewId(viewId);
-        if (msgNodeList == null) {
-            showToastMessage("Message list is null");
-        } else {
-            int len = msgNodeList.size();
-            //showToastMessage("Message list size is " + Integer.toString(len));
-            for (int i=0; i<len; i++) {
-                AccessibilityNodeInfo subNode = msgNodeList.get(i);
-                if (subNode != null) {
-                    Message msg = new Message();
-                    findMessageItem(subNode, msg);
-                    if (!msg.fromUserNick.isEmpty() && !msg.content.isEmpty()) {
-                        //showToastMessage( msg.fromUserNick + ": " + msg.content);
-                        mMessageList.add(msg);
-                    }
-                }
-            }
-        }
-    }
-
-    private void findMessageItem(AccessibilityNodeInfo node, Message msg) {
-        String tmpName = "";
-
-        for (int i=0; i<node.getChildCount(); i++) {
-            AccessibilityNodeInfo subNode = node.getChild(i);
-            if (subNode == null) {
-                continue;
-            }
-            if ("android.widget.TextView".equals(subNode.getClassName().toString())) {
-                if (subNode.isLongClickable()) {
-                    // This is message content
-                    if (TextUtils.isEmpty(subNode.getText())) {
-                        // Empty message
-                        continue;
-                    } else {
-                        msg.content = subNode.getText().toString();
-                    }
-                } else {
-                    // This is nick or remark name
-                    if (TextUtils.isEmpty(subNode.getText())) {
-                        msg.fromUserNick = "";
-                        msg.fromUserRemark = "";
-                    } else {
-                        msg.fromUserNick = subNode.getText().toString().trim();
-                        msg.fromUserRemark = msg.fromUserNick;
-                    }
-                }
-            }/* else if ("android.widget.ImageView".equals(subNode.getClassName().toString())) {
-                if (subNode.isLongClickable() && !TextUtils.isEmpty(subNode.getContentDescription())) {
-                    // This is head photo
-                    tmpName = subNode.getContentDescription().toString();
-                    if (tmpName.contains("头像")) {
-                        tmpName = tmpName.replace("头像", "");
-                        tmpName = tmpName.trim();
-                        if (msg.fromUserNick.isEmpty()) {
-                            msg.fromUserNick = tmpName;
-                            msg.fromUserRemark = msg.fromUserNick;
-                        }
-                    }
-                }
-            }*/
-
-            findMessageItem(subNode, msg);
-        }
-    }
-
     private void sendChatMessage(String msg) {
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-        String viewId = "com.tencent.mm:id/a2v";
-        List<AccessibilityNodeInfo> editNodeList = rootNode.findAccessibilityNodeInfosByViewId(viewId);
-        if (editNodeList == null) {
-            showToastMessage("Not found input control !");
-        } else {
-            int len = editNodeList.size();
-            if (len > 0) {
-                AccessibilityNodeInfo editNode = editNodeList.get(0);
-                if (editNode != null) {
-                    Bundle arguments = new Bundle();
-                    arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, msg);
-                    editNode.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
-                    clickSendButton();
-                }
-            }
-        }
-    }
-
-    private void clickSendButton() {
-        AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-        String viewId = "com.tencent.mm:id/a31";
-        List<AccessibilityNodeInfo> btnNodeList = rootNode.findAccessibilityNodeInfosByViewId(viewId);
-        if (btnNodeList == null) {
-            showToastMessage("Not found send button !");
-        } else {
-            int len = btnNodeList.size();
-            if (len > 0) {
-                AccessibilityNodeInfo btnNode = btnNodeList.get(0);
-                if (btnNode != null) {
-                    btnNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                }
-            }
+        if (AchatLayout.pasteChatMessage(rootNode, msg)) {
+            AchatLayout.clickSendButton(rootNode);
         }
     }
 
@@ -233,4 +141,49 @@ public class AAService extends AccessibilityService {
 
         setServiceInfo(asi);*/
     }
+
+    private void initMessageList() {
+        mMessageList.clear();
+        Message[] arrayMsg = mAchatDao.selectMessageLatest(5);
+        for (int i=arrayMsg.length-1; i>=0; i--) {
+            Message msg = arrayMsg[i];
+            mMessageList.add(msg);
+        }
+    }
+
+    static class WebReportHandler extends Handler {
+        private AAService pthis;
+
+        WebReportHandler(AAService obj) {
+            pthis = obj;
+        }
+
+        @Override
+        public void handleMessage(android.os.Message threadMsg) {
+            String text = "";
+            switch (threadMsg.what) {
+                case Schedule.STEP_LAST_TERM:
+                case Schedule.STEP_WELCOME:
+                case Schedule.STEP_END_TIP:
+                case Schedule.STEP_END:
+                case Schedule.STEP_CHECK:
+                case Schedule.STEP_ISSUE:
+                    text = pthis.mWebReport.getSendText();
+                    if (!text.isEmpty()) {
+                        pthis.sendChatMessage(text);
+                    }
+                    break;
+                case Schedule.STEP_CLASS:
+                    text = pthis.mWebReport.getSendText();
+                    if (!text.isEmpty()) {
+                        pthis.sendChatMessage(text);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(threadMsg);
+        }
+    }
+    private Handler mHandle = new WebReportHandler(this);
 }

@@ -96,6 +96,17 @@ function db_order_lose_sum($userId)
     return $sum;
 }
 
+function db_order_frozen_sum($userId)
+{
+    $sum = $GLOBALS['db']->sum('order', 'amount',
+        [
+            'user_id' => $userId,
+            'status' => 0
+        ]
+    );
+    return $sum;
+}
+
 function db_get_order_for_verify($userId, $issueNum)
 {
     $orders = $GLOBALS['db']->select('order',

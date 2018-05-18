@@ -262,7 +262,7 @@ class Message extends GloveBase {
             return false;
         }
         
-        $balance = $this->getUserBalance($user);
+        $balance = $this->getUserAvailableBalance($user);
         $balance = floatval($balance);
         if ($command->getAmount() > $balance) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['e_money_not_enough'];
@@ -328,7 +328,7 @@ class Message extends GloveBase {
             $amount = 0.0;
         }
         
-        $balance = $this->getUserBalance($user);
+        $balance = $this->getUserAvailableBalance($user);
         $balance = floatval($balance);
         if ($amount > 0.0) {
             if ($amount > $balance) {
@@ -389,6 +389,22 @@ class Message extends GloveBase {
         $balance = db_money_balance($userId);
         $balance = floatval($balance);
         $format_num = sprintf("%.2f", $balance);
+        return $format_num;
+    }
+    
+    private function getUserFrozenAmount($user) {
+        $userId = $user['user_id'];
+        $amount = db_order_frozen_sum($userId);
+        $amount = floatval($amount);
+        $format_num = sprintf("%.2f", $amount);
+        return $format_num;
+    }
+    
+    private function getUserAvailableBalance($user) {
+        $balance = $this->getUserBalance($user);
+        $frozen = $this->getUserFrozenAmount($user);
+        $left = floatval($balance) - floatval($frozen);
+        $format_num = sprintf("%.2f", $left);
         return $format_num;
     }
     

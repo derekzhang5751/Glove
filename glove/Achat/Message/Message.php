@@ -235,7 +235,7 @@ class Message extends GloveBase {
     }
     
     private function processOrder($command, $schedule) {
-        $user = $this->loadUser(false);
+        $user = $this->loadUser(true);
         if ($user == false) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
             $this->return['data']['status'] = COMMAND_FAILED;
@@ -293,7 +293,7 @@ class Message extends GloveBase {
     }
     
     private function processBalance($command) {
-        $user = $this->loadUser(false);
+        $user = $this->loadUser(true);
         if ($user == false) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
             $this->return['data']['status'] = COMMAND_FAILED;
@@ -313,7 +313,7 @@ class Message extends GloveBase {
     }
     
     private function processWithdraw($command) {
-        $user = $this->loadUser(false);
+        $user = $this->loadUser(true);
         if ($user == false) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_not_member'];
             $this->return['data']['status'] = COMMAND_FAILED;
@@ -364,7 +364,7 @@ class Message extends GloveBase {
     }
     
     private function processCancel($schedule) {
-        $user = $this->loadUser(false);
+        $user = $this->loadUser(true);
         if ($user == false) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
             $this->return['data']['status'] = COMMAND_FAILED;

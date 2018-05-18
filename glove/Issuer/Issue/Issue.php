@@ -489,7 +489,8 @@ class Issue extends GloveBase {
                 // update order status
                 if ($bingo) {
                     db_update_order_status($order['order_id'], 2);
-                    $amount = $order['amount'];
+                    //$amount = $order['amount'];
+                    $amount = $this->computeRateOfWin($order);
                 } else {
                     db_update_order_status($order['order_id'], 1);
                     $amount = 0 - $order['amount'];
@@ -592,5 +593,92 @@ class Issue extends GloveBase {
         } else {
             return false;
         }
+    }
+    
+    private function computeRateOfWin($order) {
+        $amount = $order['amount'];
+        $size = $amount; // floatval($amount) / 5.0;
+        $rate = 1.5;
+        
+        $line = $order['line'];
+        $value = $order['value'];
+        if ($line == "99") {
+            // 和值
+            switch ($value) {
+                case '3':
+                    $rate = 40.0;
+                    break;
+                case '4':
+                    $rate = 40.0;
+                    break;
+                case '5':
+                    $rate = 20.0;
+                    break;
+                case '6':
+                    $rate = 20.0;
+                    break;
+                case '7':
+                    $rate = 13.0;
+                    break;
+                case '8':
+                    $rate = 13.0;
+                    break;
+                case '9':
+                    $rate = 9.0;
+                    break;
+                case '10':
+                    $rate = 9.0;
+                    break;
+                case '11':
+                    $rate = 8.0;
+                    break;
+                case '12':
+                    $rate = 9.0;
+                    break;
+                case '13':
+                    $rate = 9.0;
+                    break;
+                case '14':
+                    $rate = 13.0;
+                    break;
+                case '15':
+                    $rate = 13.0;
+                    break;
+                case '16':
+                    $rate = 20.0;
+                    break;
+                case '17':
+                    $rate = 20.0;
+                    break;
+                case '18':
+                    $rate = 40.0;
+                    break;
+                case '19':
+                    $rate = 40.0;
+                    break;
+                default:
+                    $rate = 8.0;
+                    break;
+            }
+        } else if ($line == "1" || $line == "2") {
+            // 冠、亚
+            if ($value == "Z" || $value == "S") {
+                // 大、双
+                $rate = 2.1;
+            } else {
+                // 小、单
+                $rate = 1.7;
+            }
+        } else {
+            // other
+            if (is_numeric($value)) {
+                $rate = 9.72;
+            } else {
+                $rate = 1.95;
+            }
+        }
+        
+        $amount = floor($size * $rate);
+        return intval($amount);
     }
 }

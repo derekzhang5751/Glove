@@ -6,6 +6,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +26,7 @@ public class WebReport implements Runnable {
     private String mSendText;
     private AchatDao mAchatDao;
     private Handler mHandler;
+    private String mIssueNum;
 
     public static class ThreadParameter {
         public AchatDao mAchatDao;
@@ -174,6 +176,37 @@ public class WebReport implements Runnable {
 
     private void doCheck() {
         mSendText = "==== 本期竞猜核对 ====";
+
+        Inquiry inquiry = new Inquiry();
+        inquiry.mAction = "verify";
+        inquiry.mIssueNum = "";
+        String response = reportInquery(inquiry);
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
+                mIssueNum = inquiry.mIssueNum;
+                JSONArray userList = jsonObject.getJSONObject("data").getJSONArray("user_list");
+                for (int i=0; i<userList.length(); i++) {
+                    JSONObject orderObj = userList.getJSONObject(i);
+                    String nickName = orderObj.getString("nick_name");
+                    int balance = orderObj.getInt("balance");
+                    String tmp = String.format("\n\n(%s)积分： %d", nickName, balance);
+                    mSendText += tmp;
+
+                    JSONArray orderList = orderObj.getJSONArray("orders");
+                    for (int j=0; j<orderList.length(); j++) {
+                        String orderStr = orderList.getString(j);
+                        mSendText = mSendText + "\n" + orderStr;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            mSendText += "\n空";
+        }
+
         Message msg = new Message();
         msg.what = Schedule.STEP_CHECK;
         mHandler.sendMessage(msg);
@@ -181,6 +214,28 @@ public class WebReport implements Runnable {
 
     private void doIssue() {
         mSendText = "==== 本期竞猜结果 ====\n中奖名单：";
+
+        Inquiry inquiry = new Inquiry();
+        inquiry.mAction = "result";
+        inquiry.mIssueNum = mIssueNum;
+        String response = reportInquery(inquiry);
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
+
+                JSONArray userList = jsonObject.getJSONObject("data").getJSONArray("user_list");
+                for (int i=0; i<userList.length(); i++) {
+                    String orderStr = userList.getString(i);
+                    mSendText = mSendText + "\n" + orderStr;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            mSendText += " 空";
+        }
+
         Message msg = new Message();
         msg.what = Schedule.STEP_ISSUE;
         mHandler.sendMessage(msg);
@@ -206,7 +261,7 @@ public class WebReport implements Runnable {
         }
     }
 
-    private void reportInquery(Inquiry inquiry) {
+    private String reportInquery(Inquiry inquiry) {
         String sUrl = SERVER_HOST + "/Achat/Inquiry/do.php";
         String postData = "";
         String json = inquiry.toJsonString();
@@ -215,15 +270,8 @@ public class WebReport implements Runnable {
 
         postData = "version=1.0&DeviceType=1&md5=" + md5 + "&data=" + base64;
         String response = httpPost(sUrl, postData);
-        if (!TextUtils.isEmpty(response)) {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
-                //inquiry.status = jsonObject.getJSONObject("data").getInt("user_list");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+
+        return response;
     }
 
     private String httpPost(String sUrl, String postData) {

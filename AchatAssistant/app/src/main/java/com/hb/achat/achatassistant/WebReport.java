@@ -1,24 +1,23 @@
 package com.hb.achat.achatassistant;
 
-import android.content.ContentValues;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class WebReport implements Runnable {
-    public static final String SERVER_HOST = "http://glove.loc";
+    public static final String SERVER_HOST = "http://205.209.167.174:8089";
     private boolean mExitFlag;
     private Thread mThread;
     private String mThreadName;
@@ -43,16 +42,18 @@ public class WebReport implements Runnable {
 
     @Override
     public void run() {
+        Log.d("AASERVICE", "WebReportThread start");
         Schedule schedule = new Schedule();
         int lastStep = Schedule.STEP_NULL;
+        int wait = schedule.getNextWait();
 
         while (!mExitFlag) {
             int step = schedule.next();
+            Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
             if (step == lastStep) {
                 if (step == Schedule.STEP_CLASS || step == Schedule.STEP_END_TIP) {
                     doOrder();
                 }
-                int wait = schedule.getNextWait();
                 try {
                     Thread.sleep(wait * 1000);
                 } catch (InterruptedException ex) {
@@ -95,8 +96,14 @@ public class WebReport implements Runnable {
                     }
                     break;
             }
+            try {
+                Thread.sleep(wait * 1000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
         }
         // Working thread exits
+        Log.d("AASERVICE", "WebReportThread exit");
     }
 
     public void start() {
@@ -145,6 +152,7 @@ public class WebReport implements Runnable {
 
     private void doOrder() {
         com.hb.achat.achatassistant.Message[] arrayMsg = mAchatDao.selectMessageUnprocessed(5);
+        Log.d("AASERVICE", "WebReport, do order get message unprocessed " + Integer.toString(arrayMsg.length));
         for (int i=0; i<arrayMsg.length; i++) {
             com.hb.achat.achatassistant.Message msg = arrayMsg[i];
             reportMessage(msg);
@@ -275,6 +283,7 @@ public class WebReport implements Runnable {
     }
 
     private String httpPost(String sUrl, String postData) {
+        Log.d("AASERVICE", "WebReport access: " + sUrl);
         String response = "";
         HttpURLConnection urlConnection = null;
         try {
@@ -306,13 +315,14 @@ public class WebReport implements Runnable {
             urlConnection.disconnect();
             //
         } catch (Exception ex) {
+            Log.d("AASERVICE", "WebReport HTTP exception: " + ex.getMessage());
             ex.printStackTrace();
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
         }
-
+        Log.d("AASERVICE", "WebReport response: " + response);
         return response;
     }
 }

@@ -2,6 +2,7 @@ package com.hb.achat.achatassistant;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.List;
@@ -87,19 +88,19 @@ public class AchatLayout {
             //showToastMessage("Message list is null");
         } else {
             int len = msgNodeList.size();
-            //showToastMessage("Message list size is " + Integer.toString(len));
+            //Log.d("AASERVICE", "fetchMessageList: Message list size is " + Integer.toString(len));
             for (int i=0; i<len; i++) {
                 AccessibilityNodeInfo subNode = msgNodeList.get(i);
                 if (subNode != null) {
                     Message msg = new Message();
                     findMessageItem(subNode, msg);
-                    if (!msg.fromUserNick.isEmpty() && !msg.content.isEmpty()) {
-                        //showToastMessage( msg.fromUserNick + ": " + msg.content);
+                    if (!TextUtils.isEmpty(msg.fromUserNick) && !TextUtils.isEmpty(msg.content)) {
+                        //Log.d("AASERVICE", "fetchMessageList: " + msg.fromUserNick + ": " + msg.content);
                         msg.id = 0;
-                        msg.status = 0;
+                        msg.status = -1;
                         msg.toUserNick = "";
                         msg.reply = "";
-                        msg.recvTime = Tools.getCurTimeFormatted();
+                        msg.recvTime = Tools.getCurDateTimeFormatted();
                         msgList.add(msg);
                     }
                 }
@@ -111,7 +112,7 @@ public class AchatLayout {
         String viewId = "com.tencent.mm:id/a2v";
         List<AccessibilityNodeInfo> editNodeList = rootNode.findAccessibilityNodeInfosByViewId(viewId);
         if (editNodeList == null) {
-            //showToastMessage("Not found input control !");
+            Log.d("AASERVICE", "AchatLayout, Not found input control !");
             return false;
         } else {
             int len = editNodeList.size();
@@ -122,7 +123,11 @@ public class AchatLayout {
                     arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, msg);
                     editNode.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
                     return true;
+                } else {
+                    Log.d("AASERVICE", "AchatLayout, the first input control is null");
                 }
+            } else {
+                Log.d("AASERVICE", "AchatLayout, Input control is empty");
             }
         }
         return false;
@@ -132,7 +137,7 @@ public class AchatLayout {
         String viewId = "com.tencent.mm:id/a31";
         List<AccessibilityNodeInfo> btnNodeList = rootNode.findAccessibilityNodeInfosByViewId(viewId);
         if (btnNodeList == null) {
-            //showToastMessage("Not found send button !");
+            Log.d("AASERVICE", "AchatLayout, Not found send button !");
             return false;
         } else {
             int len = btnNodeList.size();

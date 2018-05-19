@@ -1,5 +1,6 @@
 package com.hb.achat.achatassistant;
 
+
 public class Schedule {
     public static final int STEP_NULL = -1;
     public static final int STEP_INIT_ENV = 0;
@@ -27,11 +28,12 @@ public class Schedule {
         if (i > 5) {
             i = i - 5;
         }
-        return String.format("$i:$s", i, sec);
+        return String.format("%d:%s", i, sec);
     }
 
     public int next() {
         mCurTime = Tools.getCurTimeFormatted();
+        //Log.d("AASERVICE", "Schedule, current time: " + mCurTime);
         if (mStep == STEP_ISSUE) {
             mStep = STEP_LAST_TERM;
         }
@@ -53,18 +55,21 @@ public class Schedule {
             }
 
             String shortTime = getShortTime();
+            //Log.d("AASERVICE", "Schedule, short time: " + shortTime);
             int step = 0;
-            if (shortTime.compareTo("0:00") >= 0 && shortTime.compareTo("1:00") < 0) {
+            if (shortTime.compareTo("0:00") >= 0 && shortTime.compareTo("0:30") < 0) {
                 step = STEP_LAST_TERM;
-            } else if (shortTime.compareTo("1:00") >= 0 && shortTime.compareTo("1:05") < 0) {
+            } else if (shortTime.compareTo("0:30") >= 0 && shortTime.compareTo("0:40") < 0) {
                 step = STEP_WELCOME;
+            } else if (shortTime.compareTo("0:40") >= 0 && shortTime.compareTo("3:00") < 0) {
+                step = STEP_CLASS;
             } else if (shortTime.compareTo("3:00") >= 0 && shortTime.compareTo("4:00") < 0) {
                 step = STEP_END_TIP;
             } else if (shortTime.compareTo("4:00") >= 0 && shortTime.compareTo("4:05") < 0) {
                 step = STEP_END;
-            } else if (shortTime.compareTo("4:05") >= 0 && shortTime.compareTo("4:55") < 0) {
+            } else if (shortTime.compareTo("4:05") >= 0 && shortTime.compareTo("4:50") < 0) {
                 step = STEP_CHECK;
-            } else if (shortTime.compareTo("4:55") >= 0 && shortTime.compareTo("5:00") < 0) {
+            } else if (shortTime.compareTo("4:50") >= 0 && shortTime.compareTo("5:00") < 0) {
                 step = STEP_ISSUE;
             } else {
                 step = STEP_CLASS;

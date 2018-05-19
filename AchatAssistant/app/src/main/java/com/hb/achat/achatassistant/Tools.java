@@ -16,6 +16,12 @@ public class Tools {
 
     public static String getCurTimeFormatted() {
         Date nowTime = new Date();
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        return timeFormat.format(nowTime);
+    }
+
+    public static String getCurDateTimeFormatted() {
+        Date nowTime = new Date();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return timeFormat.format(nowTime);
     }
@@ -41,15 +47,16 @@ public class Tools {
 
         for (int i=0; i<msgList.size(); i++) {
             Message msg = msgList.get(i);
+
+            if (newMsgPosition == -1 && messageInTheList(msg, oldList)) {
+                continue;
+            } else {
+                newMsgPosition = i;
+            }
+
             if (newMsgPosition >= 0) {
                 newList.add(msg);
                 oldList.add(msg);
-            } else {
-                if (messageInTheList(msg, oldList)) {
-                    continue;
-                } else {
-                    newMsgPosition = i;
-                }
             }
         }
     }

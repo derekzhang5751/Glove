@@ -13,12 +13,13 @@ import java.util.List;
 
 public class AAService extends AccessibilityService {
     private String mGroupName = Tools.GROUP_NAME;
-    private List<Message> mMessageList = new ArrayList<>();
-    //private int mIndex = 0;
+    public List<Message> mMessageList = new ArrayList<>();
+    public boolean mMessageListReady = false;
+    public AchatDao mAchatDao;
 
     private AchatDatabase mAppDb;
-    private AchatDao mAchatDao;
     private WebReport mWebReport;
+    private DbHelper  mDbHelper;
 
     public AAService() {
     }
@@ -29,7 +30,9 @@ public class AAService extends AccessibilityService {
         //String msg = "";
         switch (eventType) {
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
-                refreshMessageInGroup();
+                if (mMessageListReady) {
+                    refreshMessageInGroup();
+                }
                 //msg = "TYPE_WINDOW_CONTENT_CHANGED " + event.getClassName().toString();
                 //showToastMessage(msg);
                 break;
@@ -49,7 +52,7 @@ public class AAService extends AccessibilityService {
     @Override
     public void onServiceConnected() {
         super.onServiceConnected();
-        showToastMessage("服务已连接");
+        showToastMessage("服务已连接，正在对初始化");
         if (mAppDb == null) {
             mAppDb = Room.databaseBuilder(getApplicationContext(), AchatDatabase.class, "achat.db").build();
             mAchatDao = mAppDb.getAchatDao();
@@ -65,26 +68,29 @@ public class AAService extends AccessibilityService {
 
     @Override
     public void onInterrupt() {
+        mWebReport.stop();
+        mWebReport = null;
+        mDbHelper.stop();
+        mDbHelper = null;
         if (mAppDb != null) {
             mAchatDao = null;
             mAppDb.close();
             mAppDb = null;
         }
-        mWebReport.stop();
-        mWebReport = null;
         showToastMessage("我要被终结啦！！！");
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        mWebReport.stop();
+        mWebReport = null;
+        mDbHelper.stop();
+        mDbHelper = null;
         if (mAppDb != null) {
             mAchatDao = null;
             mAppDb.close();
             mAppDb = null;
         }
-        mWebReport.stop();
-        mWebReport = null;
-
         showToastMessage("服务被关闭");
         return super.onUnbind(intent);
     }
@@ -107,10 +113,11 @@ public class AAService extends AccessibilityService {
                 String str = "";
                 for (int i=0; i<newList.size(); i++) {
                     Message msg = newList.get(i);
-                    mAchatDao.insertMessage(msg);
                     str = str + "[" + msg.fromUserRemark + "] says [" + msg.content + "]\n";
                 }
-                showToastMessage(str);
+                if (!str.isEmpty()) {
+                    showToastMessage(str);
+                }
             }
 
             /*mIndex++;
@@ -122,9 +129,12 @@ public class AAService extends AccessibilityService {
     }
 
     private void sendChatMessage(String msg) {
+        //Log.d("AASERVICE", "AAService, send message: " + msg);
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         if (AchatLayout.pasteChatMessage(rootNode, msg)) {
             AchatLayout.clickSendButton(rootNode);
+        } else {
+            //Log.d("AASERVICE", "AAService, find input failed");
         }
     }
 
@@ -143,12 +153,9 @@ public class AAService extends AccessibilityService {
     }
 
     private void initMessageList() {
-        mMessageList.clear();
-        Message[] arrayMsg = mAchatDao.selectMessageLatest(5);
-        for (int i=arrayMsg.length-1; i>=0; i--) {
-            Message msg = arrayMsg[i];
-            mMessageList.add(msg);
-        }
+        mMessageListReady = false;
+        mDbHelper = new DbHelper(this);
+        mDbHelper.start();
     }
 
     static class WebReportHandler extends Handler {
@@ -179,11 +186,16 @@ public class AAService extends AccessibilityService {
                         pthis.sendChatMessage(text);
                     }
                     break;
+                    //
+                case DbHelper.MSG_INIT_DONE:
+                    pthis.mMessageListReady = true;
+                    pthis.showToastMessage("服务初始化完成");
+                    break;
                 default:
                     break;
             }
             super.handleMessage(threadMsg);
         }
     }
-    private Handler mHandle = new WebReportHandler(this);
+    public Handler mHandle = new WebReportHandler(this);
 }

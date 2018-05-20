@@ -295,7 +295,8 @@ public class WebReport implements Runnable {
             urlConnection.setDoOutput(true);
             urlConnection.setUseCaches(false);
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+            //urlConnection.setRequestProperty("Content-Type", "multipart/form-data");
             urlConnection.setRequestProperty("Charset", "utf-8");
             // Connect to server
             urlConnection.connect();

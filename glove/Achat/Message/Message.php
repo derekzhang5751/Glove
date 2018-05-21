@@ -158,19 +158,19 @@ class Message extends GloveBase {
     
     private function fillWithInvalidCmd() {
         $i = rand(0, 2);
-        $this->return['data']['reply'] = $GLOBALS['LANG']['cmd_invalid'][$i];
+        $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['cmd_invalid'][$i];
         $this->return['data']['status'] = COMMAND_INVALID;
     }
     
     private function fillWithSuccessCmd() {
         $i = rand(0, 2);
-        $this->return['data']['reply'] = $GLOBALS['LANG']['cmd_success'][$i];
+        $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['cmd_success'][$i];
         $this->return['data']['status'] = COMMAND_SUCCESS;
     }
     
     private function fillWithFailedCmd() {
         $i = 0;
-        $this->return['data']['reply'] = $GLOBALS['LANG']['cmd_failed'][$i];
+        $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['cmd_failed'][$i];
         $this->return['data']['status'] = COMMAND_FAILED;
     }
     
@@ -207,7 +207,7 @@ class Message extends GloveBase {
         // user name and id, amount, req_time, status
         $user = $this->loadUser(true);
         if ($user == false) {
-            $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
+            $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_register'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }
@@ -237,7 +237,7 @@ class Message extends GloveBase {
     private function processOrder($command, $schedule) {
         $user = $this->loadUser(true);
         if ($user == false) {
-            $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
+            $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_register'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }
@@ -246,7 +246,7 @@ class Message extends GloveBase {
         $issueNum = $schedule->getCurIssueNum();
         
         if ($step != STEP_PK10_ORDER && $step != STEP_XYFT_ORDER) {
-            $this->return['data']['reply'] = $GLOBALS['LANG']['error_break_time'];
+            $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_break_time'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }
@@ -282,7 +282,7 @@ class Message extends GloveBase {
             );
             $orderId = db_order_insert($order, $user);
             if ($orderId === false) {
-                $this->return['data']['reply'] = $GLOBALS['LANG']['error_order'];
+                $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_order'];
                 $this->return['data']['status'] = COMMAND_FAILED;
                 return false;
             }
@@ -295,7 +295,7 @@ class Message extends GloveBase {
     private function processBalance($command) {
         $user = $this->loadUser(true);
         if ($user == false) {
-            $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
+            $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_register'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }
@@ -315,7 +315,7 @@ class Message extends GloveBase {
     private function processWithdraw($command) {
         $user = $this->loadUser(true);
         if ($user == false) {
-            $this->return['data']['reply'] = $GLOBALS['LANG']['error_not_member'];
+            $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_not_member'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }
@@ -332,7 +332,7 @@ class Message extends GloveBase {
         $balance = floatval($balance);
         if ($amount > 0.0) {
             if ($amount > $balance) {
-                $this->return['data']['reply'] = $GLOBALS['LANG']['error_withdraw'];
+                $this->return['data']['reply'] = $GLOBALS['LANG']['e_money_not_enough'];
                 $this->return['data']['status'] = COMMAND_FAILED;
                 return false;
             }
@@ -366,7 +366,7 @@ class Message extends GloveBase {
     private function processCancel($schedule) {
         $user = $this->loadUser(true);
         if ($user == false) {
-            $this->return['data']['reply'] = $GLOBALS['LANG']['error_register'];
+            $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_register'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }
@@ -375,7 +375,7 @@ class Message extends GloveBase {
         $issueNum = $schedule->getCurIssueNum();
         
         if ($step != STEP_PK10_ORDER && $step != STEP_XYFT_ORDER) {
-            $this->return['data']['reply'] = $GLOBALS['LANG']['error_break2_time'];
+            $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_break2_time'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }

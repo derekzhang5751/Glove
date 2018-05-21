@@ -46,12 +46,14 @@ class GloveBase extends \Bricker\RequestLifeCircle {
         if ( empty($data) ) {
             return false;
         } else {
+            //exit($data);
             $md5 = md5($data . MD5_KEY);
             if ($this->md5 === $md5) {
                 $msg = base64_decode($data);
                 $j = json_decode($msg, TRUE);
                 return $j;
             } else {
+                //exit($md5 . "!=" . $this->md5);
                 return false;
             }
         }

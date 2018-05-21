@@ -115,10 +115,12 @@ class Inquiry extends GloveBase {
             'issue_num' => '',
             'user_list' => array()
         );
+        $issueNum = 0;
         if (empty($this->issueNum)) {
             return $ret;
         } else {
-            $ret['issue_num'] = $this->issueNum;
+            $issueNum = intval($this->issueNum) - 1;
+            $ret['issue_num'] = strval($issueNum);
         }
         
         // get all members in the group
@@ -126,7 +128,7 @@ class Inquiry extends GloveBase {
         
         // get all won orders of member
         foreach ($users as $user) {
-            $orders = db_get_order_for_won($user['user_id'], $this->issueNum);
+            $orders = db_get_order_for_won($user['user_id'], $issueNum);
             $od = array();
             foreach ($orders as $order) {
                 $strOrder = $this->stringOrder($order);

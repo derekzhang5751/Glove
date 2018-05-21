@@ -109,6 +109,9 @@ public class AchatLayout {
     }
 
     public static boolean pasteChatMessage(AccessibilityNodeInfo rootNode, String msg) {
+        if (rootNode == null) {
+            return false;
+        }
         String viewId = "com.tencent.mm:id/a2v";
         List<AccessibilityNodeInfo> editNodeList = rootNode.findAccessibilityNodeInfosByViewId(viewId);
         if (editNodeList == null) {
@@ -134,6 +137,9 @@ public class AchatLayout {
     }
 
     public static boolean clickSendButton(AccessibilityNodeInfo rootNode) {
+        if (rootNode == null) {
+            return false;
+        }
         String viewId = "com.tencent.mm:id/a31";
         List<AccessibilityNodeInfo> btnNodeList = rootNode.findAccessibilityNodeInfosByViewId(viewId);
         if (btnNodeList == null) {

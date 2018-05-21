@@ -13,8 +13,10 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class WebReport implements Runnable {
     public static final String SERVER_HOST = "http://205.209.167.174:8089";
@@ -49,7 +51,7 @@ public class WebReport implements Runnable {
 
         while (!mExitFlag) {
             int step = schedule.next();
-            Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
+            //Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
             if (step == lastStep) {
                 if (step == Schedule.STEP_CLASS || step == Schedule.STEP_END_TIP) {
                     doOrder();
@@ -254,9 +256,18 @@ public class WebReport implements Runnable {
         String postData = "";
         String json = msg.toJsonString();
         String base64 = Base64.encodeToString(json.getBytes(), Base64.DEFAULT);
+        base64 = base64.replace("\r", "");
+        base64 = base64.replace("\n", "");
         String md5 = Tools.md5(base64 + Tools.MD5_KEY);
 
-        postData = "version=1.0&DeviceType=1&md5=" + md5 + "&data=" + base64;
+        String urlEncode = "";
+        try {
+            urlEncode = URLEncoder.encode(base64, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        postData = "version=1.0&DeviceType=1&md5=" + md5 + "&data=" + urlEncode;
         String response = httpPost(sUrl, postData);
         if (!TextUtils.isEmpty(response)) {
             try {
@@ -274,6 +285,8 @@ public class WebReport implements Runnable {
         String postData = "";
         String json = inquiry.toJsonString();
         String base64 = Base64.encodeToString(json.getBytes(), Base64.DEFAULT);
+        base64 = base64.replace("\r", "");
+        base64 = base64.replace("\n", "");
         String md5 = Tools.md5(base64 + Tools.MD5_KEY);
 
         postData = "version=1.0&DeviceType=1&md5=" + md5 + "&data=" + base64;

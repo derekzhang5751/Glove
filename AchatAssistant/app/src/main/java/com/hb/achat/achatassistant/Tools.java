@@ -2,6 +2,7 @@ package com.hb.achat.achatassistant;
 
 import android.text.TextUtils;
 
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -66,18 +67,20 @@ public class Tools {
             return "";
         }
 
+        byte[] source = string.getBytes(Charset.forName("UTF-8"));
+
         String result = "";
-        MessageDigest md5 = null;
         try {
-            md5 = MessageDigest.getInstance("MD5");
-            byte[] bytes = md5.digest(string.getBytes());
-            for (byte b : bytes) {
-                String temp = Integer.toHexString(b & 0xff);
-                if (temp.length() == 1) {
-                    temp = "0" + temp;
-                }
-                result += temp;
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.reset();
+            md5.update(source);
+
+            StringBuffer buf = new StringBuffer();
+            for (byte b:md5.digest()) {
+                buf.append( String.format("%02x", b&0xff) );
             }
+            result = buf.toString();
+
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

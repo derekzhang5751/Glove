@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Handler;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -100,31 +101,43 @@ public class AAService extends AccessibilityService {
     }
 
     private void refreshMessageInGroup() {
+        Log.d("AASERVICE", "AAService, refresh message");
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         if (AchatLayout.isTargetGroupByName(rootNode, mGroupName)) {
+            if (mWebReport.mPauseFlag) {
+                mWebReport.mPauseFlag = false;
+            }
             //showToastMessage("已打开服务页面");
             List<Message> msgList = new ArrayList<>();
             AchatLayout.fetchMessageList(rootNode, msgList);
 
             if (msgList.size() > 0) {
+                Log.d("AASERVICE", "AAService, get message list ok");
                 List<Message> newList = new ArrayList<>();
                 Tools.getNewMessageList(msgList, mMessageList, newList);
 
+                int len = newList.size();
+                if (len <= 0) {
+                    Log.d("AASERVICE", "AAService, new message list is empty");
+                }
+
                 String str = "";
-                for (int i=0; i<newList.size(); i++) {
+                for (int i=0; i<len; i++) {
                     Message msg = newList.get(i);
                     str = str + "[" + msg.fromUserRemark + "] says [" + msg.content + "]\n";
+                    Log.d("AASERVICE", "AAService, new message: " + msg.content);
                 }
                 if (!str.isEmpty()) {
                     showToastMessage(str);
                 }
+            } else {
+                Log.d("AASERVICE", "AAService, get message list failed");
             }
-
-            /*mIndex++;
-            if (mIndex < 1) {
-                String msg = "测试消息 " + Integer.toString(mIndex);
-                sendChatMessage(msg);
-            }*/
+        } else {
+            Log.d("AASERVICE", "AAService, not in achat");
+            if (!mWebReport.mPauseFlag) {
+                mWebReport.mPauseFlag = true;
+            }
         }
     }
 
@@ -136,20 +149,6 @@ public class AAService extends AccessibilityService {
         } else {
             //Log.d("AASERVICE", "AAService, find input failed");
         }
-    }
-
-    private void setAccessibilityInfo() {
-        /*String[] packageNames = {"com.tencent.mm"};
-        AccessibilityServiceInfo asi = new AccessibilityServiceInfo();
-
-        asi.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
-            | AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
-            | AccessibilityEvent.TYPE_WINDOWS_CHANGED;
-        asi.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
-        asi.notificationTimeout = 100;
-        asi.packageNames = packageNames;
-
-        setServiceInfo(asi);*/
     }
 
     private void initMessageList() {
@@ -186,7 +185,6 @@ public class AAService extends AccessibilityService {
                         pthis.sendChatMessage(text);
                     }
                     break;
-                    //
                 case DbHelper.MSG_INIT_DONE:
                     pthis.mMessageListReady = true;
                     pthis.showToastMessage("服务初始化完成");

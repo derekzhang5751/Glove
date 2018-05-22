@@ -20,6 +20,7 @@ import java.net.URLEncoder;
 
 public class WebReport implements Runnable {
     public static final String SERVER_HOST = "http://205.209.167.174:8089";
+    public boolean mPauseFlag;
     private boolean mExitFlag;
     private Thread mThread;
     private String mThreadName;
@@ -36,6 +37,7 @@ public class WebReport implements Runnable {
 
     WebReport(ThreadParameter tp) {
         mExitFlag = false;
+        mPauseFlag = true;
         mThread = null;
         mThreadName = "WebReportThread";
         mAchatDao = tp.mAchatDao;
@@ -50,8 +52,17 @@ public class WebReport implements Runnable {
         int wait = schedule.getNextWait();
 
         while (!mExitFlag) {
+            if (mPauseFlag) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                continue;
+            }
+
             int step = schedule.next();
-            //Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
+            Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
             if (step == lastStep) {
                 if (step == Schedule.STEP_CLASS || step == Schedule.STEP_END_TIP) {
                     doOrder();

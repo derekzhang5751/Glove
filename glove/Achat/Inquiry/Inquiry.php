@@ -187,6 +187,7 @@ class Inquiry extends GloveBase {
                     $strOrder = '第十名';
                     break;
                 default:
+                    $strOrder = strval($line);
                     break;
             }
         }
@@ -200,10 +201,11 @@ class Inquiry extends GloveBase {
         } else if ($order['value'] == 'A') {
             $value = '小';
         } else {
-            $value = $order['value'];
+            $value = strval($order['value']);
         }
         $amount = intval($order['amount']);
         $strOrder = $strOrder . '[' . $value . '/'. strval($amount) . ']';
+        return $strOrder;
     }
     
     private function getUserBalance($user) {

@@ -25,14 +25,21 @@ function db_insert_issues($arrayData)
     }
 }
 
-function db_get_next_issue($type)
+function db_get_next_issue($type, $timeOffset = 0)
 {
+    $offset = intval($timeOffset);
+    if ($offset > 0 || $offset < -5) {
+        $offset = 0;
+    }
+    $issueTime = strtotime(date("Y-m-d H:i:s") . " " . strval($offset) . " minute");
+    //$issueTime = strtotime(date("Y-m-d H:i:s") . " -3 minute");
+    
     $issue = $GLOBALS['db']->get('issues',
         ['issue_num', 'issue_time'],
         [
             'type' => $type,
             'status' => 0,
-            'issue_time[>]' => date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s") . " -3 minute")),
+            'issue_time[>]' => date("Y-m-d H:i:s", $issueTime),
             'ORDER' => ['issue_time' => 'ASC']
         ]
     );

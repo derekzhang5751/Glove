@@ -107,7 +107,7 @@ class Issue extends GloveBase {
         if ($success) {
             $this->return['data']['curLotteryType'] = $type;
             
-            $nextIssue = db_get_next_issue($type);
+            $nextIssue = db_get_next_issue($type, -3);
             if ($nextIssue) {
                 //$this->return['msg'] = 'SQL:' . $GLOBALS['db']->last();
                 $this->return['data']['nextIssueNum'] = $nextIssue['issue_num'];
@@ -157,7 +157,7 @@ class Issue extends GloveBase {
             $this->return['success'] = true;
         }
         
-        $nextIssue = db_get_next_issue($type);
+        $nextIssue = db_get_next_issue($type, -3);
         if ($nextIssue) {
             $this->return['data']['nextIssueType'] = $type;
             $this->return['data']['nextIssueNum'] = $nextIssue['issue_num'];
@@ -173,7 +173,7 @@ class Issue extends GloveBase {
             }
             // retry to get next issue
             $type = $this->switchLotteryType($type);
-            $nextIssue = db_get_next_issue($type);
+            $nextIssue = db_get_next_issue($type, -3);
             if ($nextIssue) {
                 $this->return['data']['nextIssueType'] = $type;
                 $this->return['data']['nextIssueNum'] = $nextIssue['issue_num'];

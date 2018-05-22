@@ -207,6 +207,8 @@ public class WebReport implements Runnable {
                 JSONObject jsonObject = new JSONObject(response);
                 inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
                 mIssueNum = inquiry.mIssueNum;
+                mSendText = mSendText + "\n奖期：" + mIssueNum;
+
                 JSONArray userList = jsonObject.getJSONObject("data").getJSONArray("user_list");
                 for (int i=0; i<userList.length(); i++) {
                     JSONObject orderObj = userList.getJSONObject(i);
@@ -234,7 +236,7 @@ public class WebReport implements Runnable {
     }
 
     private void doIssue() {
-        mSendText = "==== 本期竞猜结果 ====\n中奖名单：";
+        mSendText = "==== 上期竞猜结果 ====";
 
         Inquiry inquiry = new Inquiry();
         inquiry.mAction = "result";
@@ -244,11 +246,18 @@ public class WebReport implements Runnable {
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
+                mSendText = mSendText + "\n奖期：" + inquiry.mIssueNum;
 
                 JSONArray userList = jsonObject.getJSONObject("data").getJSONArray("user_list");
-                for (int i=0; i<userList.length(); i++) {
-                    String orderStr = userList.getString(i);
-                    mSendText = mSendText + "\n" + orderStr;
+                int len = userList.length();
+                if (len > 0) {
+                    mSendText = mSendText + "\n中奖名单：";
+                    for (int i = 0; i <len; i++) {
+                        String orderStr = userList.getString(i);
+                        mSendText = mSendText + "\n" + orderStr;
+                    }
+                } else {
+                    mSendText = mSendText + "\n上期无人中奖";
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -39,4 +39,12 @@ public class Message {
 
         return json;
     }
+
+    public boolean same(Message msg) {
+        if (fromUserNick.equals(msg.fromUserNick) && content.equals(msg.content)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

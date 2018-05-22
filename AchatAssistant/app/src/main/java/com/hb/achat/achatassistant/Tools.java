@@ -27,37 +27,55 @@ public class Tools {
         return timeFormat.format(nowTime);
     }
 
-    public static boolean messageInTheList(Message targetMsg, List<Message> msgList) {
-        int len = msgList.size();
-        if (len < 1) {
+    public static boolean isRepeatPosition(List<Message> msgList, List<Message> oldList, int pos) {
+        int msgLen = msgList.size();
+        int oldLen = oldList.size();
+
+        if (oldLen <= 0) {
             return false;
         }
-        for (int i=len-1; i>=0; i--) {
-            Message msg = msgList.get(i);
-            if (msg.fromUserNick.equals(targetMsg.fromUserNick)
-                    && msg.content.equals(targetMsg.content)) {
+
+        Message msg1 = msgList.get(pos);
+        Message msg2 = oldList.get(oldLen-1);
+
+        if (msg1.same(msg2)) {
+            if (msgLen == 1) {
                 return true;
+            } else {
+                if (oldLen == 1) {
+                    return false;
+                } else {
+                    Message msg3 = msgList.get(pos-1);
+                    Message msg4 = oldList.get(oldLen-2);
+                    if (msg3.same(msg4)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
             }
+        } else {
+            return false;
         }
-        return false;
     }
 
     public static void getNewMessageList(List<Message> msgList, List<Message> oldList, List<Message> newList) {
         newList.clear();
-        int newMsgPosition = -1;
+        int newMsgPosition = 0;
+        int msgLen = msgList.size();
 
-        for (int i=0; i<msgList.size(); i++) {
-            Message msg = msgList.get(i);
-
-            if (newMsgPosition == -1 && messageInTheList(msg, oldList)) {
-                continue;
-            } else {
-                newMsgPosition = i;
+        for (int i=msgLen-1; i>=0; i--) {
+            if (isRepeatPosition(msgList, oldList, i)) {
+                newMsgPosition = i + 1;
+                break;
             }
+        }
 
-            if (newMsgPosition >= 0) {
-                newList.add(msg);
-                oldList.add(msg);
+        if (newMsgPosition < msgLen) {
+            for (int i=newMsgPosition; i<msgLen; i++) {
+                Message newMsg = msgList.get(i);
+                newList.add(newMsg);
+                oldList.add(newMsg);
             }
         }
     }

@@ -101,7 +101,7 @@ public class AAService extends AccessibilityService {
     }
 
     private void refreshMessageInGroup() {
-        Log.d("AASERVICE", "AAService, refresh message");
+        //Log.d("AASERVICE", "AAService, refresh message");
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         if (AchatLayout.isTargetGroupByName(rootNode, mGroupName)) {
             if (mWebReport.mPauseFlag) {
@@ -112,29 +112,29 @@ public class AAService extends AccessibilityService {
             AchatLayout.fetchMessageList(rootNode, msgList);
 
             if (msgList.size() > 0) {
-                Log.d("AASERVICE", "AAService, get message list ok");
+                //Log.d("AASERVICE", "AAService, get message list ok");
                 List<Message> newList = new ArrayList<>();
                 Tools.getNewMessageList(msgList, mMessageList, newList);
 
                 int len = newList.size();
-                if (len <= 0) {
-                    Log.d("AASERVICE", "AAService, new message list is empty");
-                }
+                //if (len <= 0) {
+                //    Log.d("AASERVICE", "AAService, new message list is empty");
+                //}
 
                 String str = "";
                 for (int i=0; i<len; i++) {
                     Message msg = newList.get(i);
                     str = str + "[" + msg.fromUserRemark + "] says [" + msg.content + "]\n";
-                    Log.d("AASERVICE", "AAService, new message: " + msg.content);
+                    //Log.d("AASERVICE", "AAService, new message: " + msg.content);
                 }
                 if (!str.isEmpty()) {
                     showToastMessage(str);
                 }
             } else {
-                Log.d("AASERVICE", "AAService, get message list failed");
+                //Log.d("AASERVICE", "AAService, get message list failed");
             }
         } else {
-            Log.d("AASERVICE", "AAService, not in achat");
+            //Log.d("AASERVICE", "AAService, not in achat");
             if (!mWebReport.mPauseFlag) {
                 mWebReport.mPauseFlag = true;
             }

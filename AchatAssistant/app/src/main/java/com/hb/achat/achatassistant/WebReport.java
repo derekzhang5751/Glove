@@ -62,7 +62,7 @@ public class WebReport implements Runnable {
             }
 
             int step = schedule.next();
-            Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
+            //Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
             if (step == lastStep) {
                 if (step == Schedule.STEP_CLASS || step == Schedule.STEP_END_TIP) {
                     doOrder();
@@ -316,7 +316,7 @@ public class WebReport implements Runnable {
     }
 
     private String httpPost(String sUrl, String postData) {
-        Log.d("AASERVICE", "WebReport access: " + sUrl);
+        //Log.d("AASERVICE", "WebReport access: " + sUrl);
         String response = "";
         HttpURLConnection urlConnection = null;
         try {
@@ -349,14 +349,14 @@ public class WebReport implements Runnable {
             urlConnection.disconnect();
             //
         } catch (Exception ex) {
-            Log.d("AASERVICE", "WebReport HTTP exception: " + ex.getMessage());
+            //Log.d("AASERVICE", "WebReport HTTP exception: " + ex.getMessage());
             ex.printStackTrace();
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
         }
-        Log.d("AASERVICE", "WebReport response: " + response);
+        //Log.d("AASERVICE", "WebReport response: " + response);
         return response;
     }
 }

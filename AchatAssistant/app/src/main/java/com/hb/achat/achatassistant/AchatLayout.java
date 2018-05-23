@@ -36,49 +36,22 @@ public class AchatLayout {
     }
 
     public static void findMessageItem(AccessibilityNodeInfo node, Message msg) {
-        String tmpName = "";
+        String viewNameId = "com.tencent.mm:id/ie";
+        String viewContentId = "com.tencent.mm:id/if";
 
-        for (int i=0; i<node.getChildCount(); i++) {
-            AccessibilityNodeInfo subNode = node.getChild(i);
-            if (subNode == null) {
-                continue;
-            }
-            if ("android.widget.TextView".equals(subNode.getClassName().toString())) {
-                if (subNode.isLongClickable()) {
-                    // This is message content
-                    if (TextUtils.isEmpty(subNode.getText())) {
-                        // Empty message
-                        continue;
-                    } else {
-                        msg.content = subNode.getText().toString();
-                    }
-                } else {
-                    // This is nick or remark name
-                    if (TextUtils.isEmpty(subNode.getText())) {
-                        msg.fromUserNick = "";
-                        msg.fromUserRemark = "";
-                    } else {
-                        msg.fromUserNick = subNode.getText().toString().trim();
-                        msg.fromUserRemark = msg.fromUserNick;
-                    }
-                }
-            }/* else if ("android.widget.ImageView".equals(subNode.getClassName().toString())) {
-                if (subNode.isLongClickable() && !TextUtils.isEmpty(subNode.getContentDescription())) {
-                    // This is head photo
-                    tmpName = subNode.getContentDescription().toString();
-                    if (tmpName.contains("头像")) {
-                        tmpName = tmpName.replace("头像", "");
-                        tmpName = tmpName.trim();
-                        if (msg.fromUserNick.isEmpty()) {
-                            msg.fromUserNick = tmpName;
-                            msg.fromUserRemark = msg.fromUserNick;
-                        }
-                    }
-                }
-            }*/
+        List<AccessibilityNodeInfo> nameNodeList = node.findAccessibilityNodeInfosByViewId(viewNameId);
+        List<AccessibilityNodeInfo> contentNodeList = node.findAccessibilityNodeInfosByViewId(viewContentId);
 
-            findMessageItem(subNode, msg);
+        if (nameNodeList != null && contentNodeList != null
+                && nameNodeList.size() > 0 && contentNodeList.size() > 0) {
+            msg.fromUserNick = nameNodeList.get(0).getText().toString().trim();
+            msg.content = contentNodeList.get(0).getText().toString().trim();
+        } else {
+            msg.fromUserNick = "";
+            msg.content = "";
         }
+
+        msg.fromUserRemark = msg.fromUserNick;
     }
 
     public static void fetchMessageList(AccessibilityNodeInfo node, List<Message> msgList) {

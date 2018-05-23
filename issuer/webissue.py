@@ -19,7 +19,7 @@ class WebIssue(WebReport):
 
         url = "http://kai.ny1819.com/pk10/getHistoryData.do"
         p = {'count': '1'}
-        resp = self.http_post(url, p)
+        resp = self.http_get(url, p)
         if resp and resp['success']:
             arr_data = resp['rows']
             if len(arr_data) > 0:
@@ -55,7 +55,7 @@ class WebIssue(WebReport):
 
         url = "http://kai.ny1819.com/xyft/getHistoryData.do"
         p = {'count': '1'}
-        resp = self.http_post(url, p)
+        resp = self.http_get(url, p)
         if resp and resp['success']:
             arr_data = resp['rows']
             if len(arr_data) > 0:
@@ -113,7 +113,8 @@ class WebIssue(WebReport):
             'n6': self.lottery.ranking[6],
             'n7': self.lottery.ranking[7],
             'n8': self.lottery.ranking[8],
-            'n9': self.lottery.ranking[9]
+            'n9': self.lottery.ranking[9],
+            'delay': DELAY_MINS
         }
 
         resp = self.http_post_md5(url, issue_json)

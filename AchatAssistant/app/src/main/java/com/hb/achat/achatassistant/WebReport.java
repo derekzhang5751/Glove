@@ -165,7 +165,7 @@ public class WebReport implements Runnable {
 
     private void doOrder() {
         com.hb.achat.achatassistant.Message[] arrayMsg = mAchatDao.selectMessageUnprocessed(5);
-        Log.d("AASERVICE", "WebReport, do order get message unprocessed " + Integer.toString(arrayMsg.length));
+        //Log.d("AASERVICE", "WebReport, do order get message unprocessed " + Integer.toString(arrayMsg.length));
         for (int i=0; i<arrayMsg.length; i++) {
             com.hb.achat.achatassistant.Message msg = arrayMsg[i];
             reportMessage(msg);

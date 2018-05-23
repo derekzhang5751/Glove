@@ -13,6 +13,49 @@ class WebIssue(WebReport):
         super(WebIssue, self).__init__()
         pass
 
+    def cp0668_get_pk10(self, issue):
+        print "Fetching PK10 {} ...".format(issue)
+        self.lottery.gotIssueNum = 0
+
+        url = "https://www.cp0668.com/timeout/pk10"
+        resp = self.http_get(url)
+        if resp and resp['lottery']=='pk10':
+            term = resp['current']
+            if issue == term['periodNumber']:
+                self.lottery.gotIssueNum = term['periodNumber']
+                self.lottery.gotIssueTime = term['awardTime']
+                self.lottery.ranking = term['awardNumbers'].split(',')
+                print "Got PK10 {} [{}]".format(self.lottery.gotIssueNum, self.lottery.gotIssueTime)
+                print "Ranking: " + ', '.join(map(str, self.lottery.ranking))
+                return
+            else:
+                print "Fetch PK10 {} ERROR, {} <> {} !!!".format(issue, issue, term['periodNumber'])
+        print "Fetch PK10 {} ERROR !!!".format(issue)
+        pass
+
+    def cp0668_get_xyft(self, issue):
+        issue_num = "20" + issue
+        print "Fetching XYFT {} ...".format(issue_num)
+        self.lottery.gotIssueNum = 0
+
+        url = "https://www.cp0668.com/timeout/xyft"
+        resp = self.http_get(url)
+        if resp and resp['lottery'] == 'xyft':
+            term = resp['current']
+            if issue_num == term['period']:
+                tmp_num = issue_num[2:]
+                self.lottery.gotIssueNum = tmp_num
+                self.lottery.gotIssueTime = term['awardTime']
+                self.lottery.ranking = term['awardNumbers'].split(',')
+                print "Got XYFT {} [{}]".format(self.lottery.gotIssueNum, self.lottery.gotIssueTime)
+                print "Ranking: " + ', '.join(map(str, self.lottery.ranking))
+                return
+            else:
+                print "Fetch XYFT {} ERROR, {} <> {} !!!".format(issue, issue_num, term['period'])
+        else:
+            print "Fetch XYFT {} ERROR, NOT SUCCESS !!!".format(issue)
+        pass
+
     def kjkj88888_get_pk10(self, issue):
         print "Fetching PK10 {} ...".format(issue)
         self.lottery.gotIssueNum = 0
@@ -80,9 +123,9 @@ class WebIssue(WebReport):
 
     def fetch_issue(self):
         if self.lottery.curLotteryType == 1:
-            self.ny1819_get_xyft(self.lottery.nextIssueNum)
+            self.cp0668_get_xyft(self.lottery.nextIssueNum)
         else:
-            self.kjkj88888_get_pk10(self.lottery.nextIssueNum)
+            self.cp0668_get_pk10(self.lottery.nextIssueNum)
 
         if int(self.lottery.nextIssueNum) == int(self.lottery.gotIssueNum):
             return True
@@ -106,7 +149,8 @@ class WebIssue(WebReport):
             'n6': self.lottery.ranking[6],
             'n7': self.lottery.ranking[7],
             'n8': self.lottery.ranking[8],
-            'n9': self.lottery.ranking[9]
+            'n9': self.lottery.ranking[9],
+            'delay': DELAY_MINS
         }
 
         resp = self.http_post_md5(url, issue_json)

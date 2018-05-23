@@ -1,6 +1,7 @@
 package com.hb.achat.achatassistant;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -39,7 +40,7 @@ public class Tools {
         Message msg2 = oldList.get(oldLen-1);
 
         if (msg1.same(msg2)) {
-            if (msgLen == 1) {
+            if (pos == 0) {
                 return true;
             } else {
                 if (oldLen == 1) {
@@ -70,6 +71,7 @@ public class Tools {
                 break;
             }
         }
+        Log.d("AASERVICE", "Compare New Msg, msg len=" + Integer.toString(msgLen) + ", new pos=" + Integer.toString(newMsgPosition));
 
         if (newMsgPosition < msgLen) {
             for (int i=newMsgPosition; i<msgLen; i++) {

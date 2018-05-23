@@ -45,8 +45,9 @@ class WebReport(threading.Thread):
 
     def http_get(self, url):
         try:
-            resp = requests.get(url, timeout=5.0)
-        except requests.exceptions.RequestException:
+            resp = requests.get(url, timeout=5.0, verify=False)
+        except requests.exceptions.RequestException as e:
+            print e
             return False
         else:
             if resp.status_code == requests.codes.ok:
@@ -54,6 +55,7 @@ class WebReport(threading.Thread):
                 j = resp.json()
                 return j
             else:
+                print("Get Recv False: status_code=" + resp.status_code)
                 return False
         pass
 

@@ -10,6 +10,7 @@ class Issue extends GloveBase {
     private $issueNum;
     private $issueTime;
     private $n0, $n1, $n2, $n3, $n4, $n5, $n6, $n7, $n8, $n9;
+    private $delay;
     
     private $return = [
         'success' => true,
@@ -50,6 +51,7 @@ class Issue extends GloveBase {
         $this->n7 = isset($postData['n7']) ? trim($postData['n7']) : '';
         $this->n8 = isset($postData['n8']) ? trim($postData['n8']) : '';
         $this->n9 = isset($postData['n9']) ? trim($postData['n9']) : '';
+        $this->delay = isset($postData['delay']) ? trim($postData['delay']) : '0';
         
         return true;
     }
@@ -103,11 +105,12 @@ class Issue extends GloveBase {
         }
         $success = true;
         
+        $delay = 0 - intval($this->delay);
         $this->return['success'] = $success;
         if ($success) {
             $this->return['data']['curLotteryType'] = $type;
             
-            $nextIssue = db_get_next_issue($type, -3);
+            $nextIssue = db_get_next_issue($type, $delay);
             if ($nextIssue) {
                 //$this->return['msg'] = 'SQL:' . $GLOBALS['db']->last();
                 $this->return['data']['nextIssueNum'] = $nextIssue['issue_num'];
@@ -157,7 +160,8 @@ class Issue extends GloveBase {
             $this->return['success'] = true;
         }
         
-        $nextIssue = db_get_next_issue($type, -3);
+        $delay = 0 - intval($this->delay);
+        $nextIssue = db_get_next_issue($type, $delay);
         if ($nextIssue) {
             $this->return['data']['nextIssueType'] = $type;
             $this->return['data']['nextIssueNum'] = $nextIssue['issue_num'];
@@ -173,7 +177,7 @@ class Issue extends GloveBase {
             }
             // retry to get next issue
             $type = $this->switchLotteryType($type);
-            $nextIssue = db_get_next_issue($type, -3);
+            $nextIssue = db_get_next_issue($type, $delay);
             if ($nextIssue) {
                 $this->return['data']['nextIssueType'] = $type;
                 $this->return['data']['nextIssueNum'] = $nextIssue['issue_num'];

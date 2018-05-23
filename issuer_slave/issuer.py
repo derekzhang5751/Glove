@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 #
 import sys, time
+import urllib3
 from config import *
 from model import Lottery
 from webinit import WebInit
@@ -63,6 +64,8 @@ def issue_report(s_time):
 if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding("utf-8")
+
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     init_issuer()
 

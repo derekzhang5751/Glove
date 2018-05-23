@@ -30,10 +30,15 @@ public class AAService extends AccessibilityService {
         int eventType = event.getEventType();
         //String msg = "";
         switch (eventType) {
-            case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
+            case AccessibilityEvent.TYPE_VIEW_SCROLLED:
                 if (mMessageListReady) {
                     refreshMessageInGroup();
                 }
+                break;
+            case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
+                //if (mMessageListReady) {
+                //    refreshMessageInGroup();
+                //}
                 //msg = "TYPE_WINDOW_CONTENT_CHANGED " + event.getClassName().toString();
                 //showToastMessage(msg);
                 break;
@@ -101,7 +106,7 @@ public class AAService extends AccessibilityService {
     }
 
     private void refreshMessageInGroup() {
-        //Log.d("AASERVICE", "AAService, refresh message");
+        Log.d("AASERVICE", "=============== AAService, refresh message ==============");
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         if (AchatLayout.isTargetGroupByName(rootNode, mGroupName)) {
             if (mWebReport.mPauseFlag) {
@@ -112,20 +117,24 @@ public class AAService extends AccessibilityService {
             AchatLayout.fetchMessageList(rootNode, msgList);
 
             if (msgList.size() > 0) {
-                //Log.d("AASERVICE", "AAService, get message list ok");
+                Log.d("AASERVICE", "AAService, get message list ok");
+                for (int j=0; j<msgList.size(); j++) {
+                    Message mm = msgList.get(j);
+                    Log.d("AASERVICE", "AAService, get message: " + mm.fromUserNick + " -> " + mm.content);
+                }
                 List<Message> newList = new ArrayList<>();
                 Tools.getNewMessageList(msgList, mMessageList, newList);
 
                 int len = newList.size();
-                //if (len <= 0) {
-                //    Log.d("AASERVICE", "AAService, new message list is empty");
-                //}
+                if (len <= 0) {
+                    Log.d("AASERVICE", "AAService, new message list is empty");
+                }
 
                 String str = "";
                 for (int i=0; i<len; i++) {
                     Message msg = newList.get(i);
                     str = str + "[" + msg.fromUserRemark + "] says [" + msg.content + "]\n";
-                    //Log.d("AASERVICE", "AAService, new message: " + msg.content);
+                    Log.d("AASERVICE", "AAService, new message: " + msg.content);
                 }
                 if (!str.isEmpty()) {
                     showToastMessage(str);

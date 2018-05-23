@@ -43,9 +43,9 @@ class WebReport(threading.Thread):
             return False
         pass
 
-    def http_get(self, url):
+    def http_get(self, url, p):
         try:
-            resp = requests.get(url, timeout=5.0)
+            resp = requests.get(url, p, timeout=5.0)
         except requests.exceptions.RequestException:
             return False
         else:

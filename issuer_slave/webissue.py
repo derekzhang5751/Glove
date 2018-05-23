@@ -17,35 +17,28 @@ class WebIssue(WebReport):
         print "Fetching PK10 {} ...".format(issue)
         self.lottery.gotIssueNum = 0
 
-        url = "http://kai.ny1819.com/pk10/getHistoryData.do"
-        p = {'count': '1'}
-        resp = self.http_post(url, p)
-        if resp and resp['success']:
-            arr_data = resp['rows']
+        url = "http://508590.com/api/pk10/getLotteryBase.php?issue={}".format(issue)
+        resp = self.http_get(url)
+        if resp and resp['errorCode']==0:
+            arr_data = resp['result']['data']
             if len(arr_data) > 0:
                 term = arr_data[0]
-                if issue == term['termNum']:
-                    self.lottery.gotIssueNum = issue
-                    self.lottery.gotIssueTime = term['lotteryTime']
-                    self.lottery.ranking[0] = term['n1']
-                    self.lottery.ranking[1] = term['n2']
-                    self.lottery.ranking[2] = term['n3']
-                    self.lottery.ranking[3] = term['n4']
-                    self.lottery.ranking[4] = term['n5']
-                    self.lottery.ranking[5] = term['n6']
-                    self.lottery.ranking[6] = term['n7']
-                    self.lottery.ranking[7] = term['n8']
-                    self.lottery.ranking[8] = term['n9']
-                    self.lottery.ranking[9] = term['n10']
-                    print "Got PK10 {} [{}]".format(self.lottery.gotIssueNum, self.lottery.gotIssueTime)
-                    print "Ranking: " + ', '.join(map(str, self.lottery.ranking))
-                    return
-                else:
-                    print "Fetch PK10 {} ERROR, {} <> {} !!!".format(issue, issue, term['termNum'])
-            else:
-                print "Fetch PK10 {} ERROR, ARRAY SIZE<=0 !!!".format(issue)
-        else:
-            print "Fetch PK10 {} ERROR, NOT SUCCESS !!!".format(issue)
+                self.lottery.gotIssueNum = term['preDrawIssue']
+                self.lottery.gotIssueTime = term['preDrawTime']
+                self.lottery.ranking[0] = term['firstNum']
+                self.lottery.ranking[1] = term['secondNum']
+                self.lottery.ranking[2] = term['thirdNum']
+                self.lottery.ranking[3] = term['fourthNum']
+                self.lottery.ranking[4] = term['fifthNum']
+                self.lottery.ranking[5] = term['sixthNum']
+                self.lottery.ranking[6] = term['seventhNum']
+                self.lottery.ranking[7] = term['eighthNum']
+                self.lottery.ranking[8] = term['ninthNum']
+                self.lottery.ranking[9] = term['tenthNum']
+                print "Got PK10 {} [{}]".format(self.lottery.gotIssueNum, self.lottery.gotIssueTime)
+                print "Ranking: " + ', '.join(map(str, self.lottery.ranking))
+                return
+        print "Fetch PK10 {} ERROR !!!".format(issue)
         pass
 
     def ny1819_get_xyft(self, issue):

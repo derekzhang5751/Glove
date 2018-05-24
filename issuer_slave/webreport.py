@@ -55,7 +55,7 @@ class WebReport(threading.Thread):
                 j = resp.json()
                 return j
             else:
-                print("Get Recv False: status_code=" + resp.status_code)
+                print("Get Recv False: status_code=" + str(resp.status_code))
                 return False
         pass
 

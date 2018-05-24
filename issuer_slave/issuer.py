@@ -10,19 +10,28 @@ from webissue import WebIssue
 
 def get_active_time():
     active = False
+    wait = 10
     cur_time = time.localtime()
-    yu = (cur_time.tm_min - DELAY_MINS) % 5
-    if yu == 0:
-        active = True
     s_time = time.strftime("[%Y-%m-%d %H:%M:%S]", cur_time)
 
     s_tmp = s_time[12:20]
-    if s_tmp < "09:00:00" and s_tmp > "04:10:00":
-        if active:
-            print("Break time {}".format(s_time))
-            active = False
-    pass
-    return active, s_time
+    if s_tmp < "09:00:00" and s_tmp > "04:05:00":
+        active = False
+    else:
+        min = s_time[16:17]
+        sec = s_time[18:20]
+        i = int(min)
+        if i > 5:
+            i = i - 5
+        short = "{}:{}".format(i, sec)
+        begin = "{}:00".format(DELAY_MINS)
+        end = "{}:00".format(DELAY_MINS + 1)
+        if short >= begin and short < end:
+            active = True
+            wait = 60
+        else:
+            wait = 10
+    return active, s_time, wait
 
 
 running = True
@@ -72,12 +81,12 @@ if __name__ == '__main__':
     print("Issue program has started up")
     while running:
         try:
-            launch, str_time = get_active_time()
+            launch, str_time, wait = get_active_time()
             if launch:
                 issue_report(str_time)
             # else:
             #    print(str_time + " Issuer is running ...")
-            time.sleep(60)
+            time.sleep(wait)
         except KeyboardInterrupt:
             print("Issuer is exiting ...")
             running = False

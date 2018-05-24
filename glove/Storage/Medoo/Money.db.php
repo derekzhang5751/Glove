@@ -29,6 +29,7 @@ function db_get_charge_by_sn($sn)
         ['id', 'charge_sn', 'user_id', 'user_name', 'amount', 'status', 'req_time'],
         [
             'charge_sn' => $sn,
+            'status' => 0
         ]
     );
     return $charge;
@@ -84,5 +85,32 @@ function db_money_insert($money)
     } else {
         //exit (var_dump( $GLOBALS['db']->error() ));
         return false;
+    }
+}
+
+function db_won_by_sn($orderSn)
+{
+    $won = $GLOBALS['db']->get('money', 'amount',
+        [
+            'sn' => $orderSn
+        ]);
+    if ($won) {
+        return intval($won);
+    } else {
+        return 0;
+    }
+}
+
+function db_user_won_amount($userId)
+{
+    $won = $GLOBALS['db']->sum('money', 'amount',
+        [
+            'user_id' => $userId,
+            'source' => 1
+        ]);
+    if ($won) {
+        return intval($won);
+    } else {
+        return 0;
     }
 }

@@ -301,11 +301,16 @@ class Message extends GloveBase {
         }
         
         $balance = $this->getUserBalance($user);
+        $won = db_user_won_amount($user['user_id']);
         $win = $this->getUserWinAmount($user);
         $lost = $this->getUserLoseAmount($user);
         
+        $balance = floor(floatval($balance));
+        $win = floor(floatval($win));
+        $lost = floor(floatval($lost));
+        
         $reply = '余额：' . $balance;
-        $reply = sprintf("\n余额：%.2f\n胜负：%0.2f\n流水：%0.2f", $balance, $win-$lost, $win+$lost);
+        $reply = sprintf("\n余额：%d\n胜负：%d\n流水：%d", $balance, $won, $win+$lost);
         $this->return['data']['reply'] = $reply;
         $this->return['data']['status'] = COMMAND_SUCCESS;
         

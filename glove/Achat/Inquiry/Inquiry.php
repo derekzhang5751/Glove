@@ -132,7 +132,8 @@ class Inquiry extends GloveBase {
             $od = array();
             foreach ($orders as $order) {
                 $strOrder = $this->stringOrder($order);
-                $str = '('.$user['nick_name'].')'.$strOrder.'='.$order['amount'];
+                $won = db_won_by_sn($order['order_sn']);
+                $str = '('.$user['nick_name'].')'.$strOrder.'='.strval($won);
                 array_push($ret['user_list'], $str);
             }
         }

@@ -46,7 +46,7 @@ class Xufei extends GloveBase {
                 'user_name' => $charge['user_name'],
                 'amount' => $charge['amount'],
                 'balance' => $balance,
-                'source' => 1,
+                'source' => 0,
                 'add_time' => date("Y-m-d H:i:s"),
                 'status' => 0,
                 'sn' => $charge['charge_sn'],

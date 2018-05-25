@@ -62,6 +62,18 @@ function db_get_last_issue($type)
     return $issue;
 }
 
+function db_get_last_term_issued()
+{
+    $issue = $GLOBALS['db']->get('issues',
+        ['type', 'issue_num', 'n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'issue_time'],
+        [
+            'status' => 1,
+            'ORDER' => ['issue_time' => 'DESC']
+        ]
+    );
+    return $issue;
+}
+
 function db_update_issue($type, $issueNum, $arrayData)
 {
     $state = $GLOBALS['db']->update('issues', $arrayData,

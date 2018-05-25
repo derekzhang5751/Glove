@@ -60,6 +60,8 @@ class Inquiry extends GloveBase {
             $data = $this->doVerify();
         } else if ($this->action == 'result') {
             $data = $this->doRelease();
+        } else if ($this->action == 'lastterm') {
+            $data = $this->doLastTerm();
         }
         
         $this->return['success'] = true;
@@ -136,6 +138,28 @@ class Inquiry extends GloveBase {
                 $str = '('.$user['nick_name'].')'.$strOrder.'='.strval($won);
                 array_push($ret['user_list'], $str);
             }
+        }
+        
+        return $ret;
+    }
+    
+    private function doLastTerm() {
+        $ret = array(
+            'issue_num' => '',
+            'issue_time' => '',
+            'n0' => 0,
+            'n1' => 0,
+            'n2' => 0
+        );
+        
+        $lastIssue = db_get_last_term_issued();
+        if ($lastIssue) {
+            //$this->return['msg'] = 'SQL:' . $GLOBALS['db']->last();
+            $ret['issue_num'] = $lastIssue['issue_num'];
+            $ret['issue_time'] = $lastIssue['issue_time'];
+            $ret['n0'] = $lastIssue['n0'];
+            $ret['n1'] = $lastIssue['n1'];
+            $ret['n2'] = $lastIssue['n2'];
         }
         
         return $ret;

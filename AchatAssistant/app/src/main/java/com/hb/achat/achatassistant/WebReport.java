@@ -150,7 +150,27 @@ public class WebReport implements Runnable {
     }
 
     private void doLastTerm() {
-        mSendText = "上期回顾\n具体内容在开发中...";
+        mSendText = "上期回顾";
+
+        Inquiry inquiry = new Inquiry();
+        inquiry.mAction = "lastterm";
+        inquiry.mIssueNum = "";
+        String response = reportInquery(inquiry);
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
+                mSendText = mSendText + "\n奖期：" + inquiry.mIssueNum;
+
+                mSendText = mSendText + "\n冠 军： " + jsonObject.getJSONObject("data").getString("n0");
+                mSendText = mSendText + "\n亚 军： " + jsonObject.getJSONObject("data").getString("n1");
+                mSendText = mSendText + "\n季 军： " + jsonObject.getJSONObject("data").getString("n2");
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         Message msg = new Message();
         msg.what = Schedule.STEP_LAST_TERM;
         mHandler.sendMessage(msg);

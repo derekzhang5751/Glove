@@ -174,7 +174,7 @@ class WebIssue(WebReport):
                 break
             else:
                 retry = retry - 1
-            time.sleep(30)
+            time.sleep(60)
 
         if retry <= 0:
             self.lottery.gotIssueNum = 0

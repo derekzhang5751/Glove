@@ -102,9 +102,9 @@ public class AchatLayout {
                 } else {
                     Log.d("AASERVICE", "AchatLayout, the first input control is null");
                 }
-            } else {
+            }/* else {
                 Log.d("AASERVICE", "AchatLayout, Input control is empty");
-            }
+            }*/
         }
         return false;
     }

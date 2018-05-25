@@ -1,7 +1,6 @@
 package com.hb.achat.achatassistant;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -71,7 +70,6 @@ public class Tools {
                 break;
             }
         }
-        Log.d("AASERVICE", "Compare New Msg, msg len=" + Integer.toString(msgLen) + ", new pos=" + Integer.toString(newMsgPosition));
 
         if (newMsgPosition < msgLen) {
             for (int i=newMsgPosition; i<msgLen; i++) {

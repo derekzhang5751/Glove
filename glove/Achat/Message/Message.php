@@ -271,22 +271,25 @@ class Message extends GloveBase {
         }
         
         if ($command->getCmdType() == COMMAND_ORDER) {
-            $orderSn = Message::generate_order_id();
-            $order = array(
-                'order_sn' => $orderSn,
-                'issue_num' => $issueNum,
-                'line' => $command->getLineNum(),
-                'value' => $command->getOrderValue(),
-                'amount' => $command->getAmount(),
-                'status' => 0,
-            );
-            $orderId = db_order_insert($order, $user);
-            if ($orderId === false) {
-                $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_order'];
-                $this->return['data']['status'] = COMMAND_FAILED;
-                return false;
+            $orders = $command->getOrderList();
+            foreach ($orders as $item) {
+                $orderSn = Message::generate_order_id();
+                $order = array(
+                    'order_sn' => $orderSn,
+                    'issue_num' => $issueNum,
+                    'line' => $item['line'],
+                    'value' => $item['value'],
+                    'amount' => $item['amount'],
+                    'status' => 0,
+                );
+                $orderId = db_order_insert($order, $user);
+                /*if ($orderId === false) {
+                    $this->return['data']['reply'] = ""; // $GLOBALS['LANG']['error_order'];
+                    $this->return['data']['status'] = COMMAND_FAILED;
+                    return false;
+                }*/
+                $this->return['data']['link_id'] = $orderSn;
             }
-            $this->return['data']['link_id'] = $orderSn;
         }
         
         return true;
@@ -300,7 +303,9 @@ class Message extends GloveBase {
             return false;
         }
         
-        $balance = $this->getUserBalance($user);
+        $balance = $this->getUserAvailableBalance($user);
+        $balance = intval($balance);
+        
         $won = db_user_won_amount($user['user_id']);
         $win = $this->getUserWinAmount($user);
         $lost = $this->getUserLoseAmount($user);

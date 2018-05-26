@@ -526,20 +526,22 @@ class Issue extends GloveBase {
         $line = $order['line'];
         $value = $order['value'];
         if ($line == '99') {
+            $isUnion = true;
             $right = intval($issue['n0']) + intval($issue['n1']);
         } else {
+            $isUnion = false;
             $i = intval($line) - 1;
             $field = sprintf("n%d", $i);
             $right = intval($issue[$field]);
         }
-        return $this->valueJudge($right, $value);
+        return $this->valueJudge($right, $value, $isUnion);
     }
     
-    private function valueJudge($right, $value) {
+    private function valueJudge($right, $value, $isUnion) {
         $ret = false;
         switch ($value) {
             case 'A':
-                $ret = $this->isSmall($right);
+                $ret = $this->isSmall($right, $isUnion);
                 break;
             case 'D':
                 $ret = $this->isDouble($right);
@@ -548,7 +550,7 @@ class Issue extends GloveBase {
                 $ret = $this->isSingle($right);
                 break;
             case 'Z':
-                $ret = $this->isBig($right);
+                $ret = $this->isBig($right, $isUnion);
                 break;
             default:
                 $ret = $this->equalNumber($value, $right);
@@ -557,25 +559,41 @@ class Issue extends GloveBase {
         return $ret;
     }
     
-    private function isBig($value) {
+    private function isBig($value, $isUnion) {
         $v = intval($value);
-        if ($v >= 6 && $v <= 10) {
-            return true;
+        if ($isUnion) {
+            if ($v >= 11 && $v <= 19) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            if ($v >= 6 && $v <= 10) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
-    private function isSmall($value) {
+    private function isSmall($value, $isUnion) {
         $v = intval($value);
-        if ($v >= 1 && $v <= 5) {
-            return true;
+        if ($isUnion) {
+            if ($v >= 3 && $v <= 10) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            if ($v >= 1 && $v <= 5) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
     private function isDouble($value) {
         $v = intval($value);
-        $arr = array(2, 4, 6, 8, 10);
+        $arr = array(2, 4, 6, 8, 10, 12, 14, 16, 18);
         if (in_array($v, $arr, true)) {
             return true;
         } else {
@@ -584,7 +602,7 @@ class Issue extends GloveBase {
     }
     private function isSingle($value) {
         $v = intval($value);
-        $arr = array(1, 3, 5, 7, 9);
+        $arr = array(1, 3, 5, 7, 9, 11, 13, 15, 17, 19);
         if (in_array($v, $arr, true)) {
             return true;
         } else {
@@ -669,9 +687,12 @@ class Issue extends GloveBase {
             if ($value == "Z" || $value == "S") {
                 // 大、双
                 $rate = 2.1;
-            } else {
+            } else if ($value == "A" || $value == "D") {
                 // 小、单
                 $rate = 1.7;
+            } else {
+                // 数字
+                $rate = 9.72;
             }
         } else {
             // other

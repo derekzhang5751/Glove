@@ -390,7 +390,16 @@ class Message extends GloveBase {
             return false;
         }
         
-        db_order_cancel($user['user_id'], $issueNum);
+        if (db_order_cancel($user['user_id'], $issueNum) == false) {
+            $reply = "订单取消失败!!!\n奖期：" . strval($issueNum);
+            $this->return['data']['reply'] = $reply;
+            $this->return['data']['status'] = COMMAND_SUCCESS;
+            return false;
+        }
+        
+        $reply = "本期您的所有订单已取消\n奖期：" . strval($issueNum);
+        $this->return['data']['reply'] = $reply;
+        $this->return['data']['status'] = COMMAND_SUCCESS;
         return true;
     }
     

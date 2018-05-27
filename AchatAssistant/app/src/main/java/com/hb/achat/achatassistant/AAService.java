@@ -117,18 +117,18 @@ public class AAService extends AccessibilityService {
             AchatLayout.fetchMessageList(rootNode, msgList);
 
             if (msgList.size() > 0) {
-                Log.d("AASERVICE", "AAService, get message list ok");
+                //Log.d("AASERVICE", "AAService, get message list ok");
                 for (int j=0; j<msgList.size(); j++) {
                     Message mm = msgList.get(j);
-                    Log.d("AASERVICE", "AAService, get message: " + mm.fromUserNick + " -> " + mm.content);
+                    //Log.d("AASERVICE", "AAService, get message: " + mm.fromUserNick + " -> " + mm.content);
                 }
                 List<Message> newList = new ArrayList<>();
                 Tools.getNewMessageList(msgList, mMessageList, newList);
 
                 int len = newList.size();
-                if (len <= 0) {
-                    Log.d("AASERVICE", "AAService, new message list is empty");
-                }
+                //if (len <= 0) {
+                //    Log.d("AASERVICE", "AAService, new message list is empty");
+                //}
 
                 String str = "";
                 for (int i=0; i<len; i++) {

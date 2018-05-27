@@ -65,9 +65,9 @@ public class WebReport implements Runnable {
             wait = schedule.getNextWait();
             //Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
             if (step == lastStep) {
-                if (step == Schedule.STEP_CLASS || step == Schedule.STEP_END_TIP) {
+                //if (step == Schedule.STEP_CLASS || step == Schedule.STEP_END_TIP) {
                     doOrder();
-                }
+                //}
                 try {
                     Thread.sleep(wait * 1000);
                 } catch (InterruptedException ex) {
@@ -257,34 +257,51 @@ public class WebReport implements Runnable {
     }
 
     private void doIssue() {
-        mSendText = "==== 上期竞猜结果 ====";
+        mSendText = "==== 本期竞猜结果 ====";
 
         Inquiry inquiry = new Inquiry();
         inquiry.mAction = "result";
         inquiry.mIssueNum = mIssueNum;
-        String response = reportInquery(inquiry);
-        if (!TextUtils.isEmpty(response)) {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
-                mSendText = mSendText + "\n奖期：" + inquiry.mIssueNum;
 
-                JSONArray userList = jsonObject.getJSONObject("data").getJSONArray("user_list");
-                int len = userList.length();
-                if (len > 0) {
-                    mSendText = mSendText + "\n中奖名单：";
-                    for (int i = 0; i <len; i++) {
-                        String orderStr = userList.getString(i);
-                        mSendText = mSendText + "\n" + orderStr;
+        boolean gotIssued = false;
+        for (int count=0; count<30; count++) {
+            String response = reportInquery(inquiry);
+            if (!TextUtils.isEmpty(response)) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String issueNum = jsonObject.getJSONObject("data").getString("issue_num");
+                    if (!TextUtils.isEmpty(issueNum)) {
+                        inquiry.mIssueNum = issueNum;
+                        mSendText = mSendText + "\n奖期：" + inquiry.mIssueNum;
+
+                        JSONArray userList = jsonObject.getJSONObject("data").getJSONArray("user_list");
+                        int len = userList.length();
+                        if (len > 0) {
+                            mSendText = mSendText + "\n中奖名单：";
+                            for (int i = 0; i <len; i++) {
+                                String orderStr = userList.getString(i);
+                                mSendText = mSendText + "\n" + orderStr;
+                            }
+                        } else {
+                            mSendText = mSendText + "\n本期无人中奖";
+                        }
+                        gotIssued = true;
+                        break;
                     }
-                } else {
-                    mSendText = mSendText + "\n上期无人中奖";
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-        } else {
-            mSendText += " 空";
+            //
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        if (!gotIssued) {
+            mSendText += "\n开奖结果异常，本期所有订单取消!!!";
         }
 
         Message msg = new Message();

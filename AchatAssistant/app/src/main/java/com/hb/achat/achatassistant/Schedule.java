@@ -1,6 +1,8 @@
 package com.hb.achat.achatassistant;
 
 
+import android.util.Log;
+
 public class Schedule {
     public static final int STEP_NULL = -1;
     public static final int STEP_INIT_ENV = 0;
@@ -64,9 +66,9 @@ public class Schedule {
                     step = STEP_END_TIP;
                 } else if (shortTime.compareTo("4:00") >= 0 && shortTime.compareTo("4:05") < 0) {
                     step = STEP_END;
-                } else if (shortTime.compareTo("4:05") >= 0 && shortTime.compareTo("4:50") < 0) {
+                } else if (shortTime.compareTo("4:05") >= 0 && shortTime.compareTo("4:55") < 0) {
                     step = STEP_CHECK;
-                } else if (shortTime.compareTo("4:50") >= 0 && shortTime.compareTo("5:00") < 0) {
+                } else if (shortTime.compareTo("4:55") >= 0 && shortTime.compareTo("5:00") < 0) {
                     step = STEP_ISSUE;
                 } else {
                     step = STEP_CLASS;
@@ -83,9 +85,9 @@ public class Schedule {
                     step = STEP_END_TIP;
                 } else if (shortTime.compareTo("2:00") >= 0 && shortTime.compareTo("2:05") < 0) {
                     step = STEP_END;
-                } else if (shortTime.compareTo("2:05") >= 0 && shortTime.compareTo("2:50") < 0) {
+                } else if (shortTime.compareTo("2:05") >= 0 && shortTime.compareTo("2:55") < 0) {
                     step = STEP_CHECK;
-                } else if (shortTime.compareTo("2:50") >= 0 && shortTime.compareTo("3:00") < 0) {
+                } else if (shortTime.compareTo("2:55") >= 0 && shortTime.compareTo("3:00") < 0) {
                     step = STEP_ISSUE;
                 } else {
                     step = STEP_CLASS;
@@ -110,10 +112,10 @@ public class Schedule {
                     mNextWait = 2;
                     break;
                 case STEP_CHECK:
-                    mNextWait = 5;
+                    mNextWait = 2;
                     break;
                 case STEP_ISSUE:
-                    mNextWait = 1;
+                    mNextWait = 5;
                     break;
                 default:
                     mNextWait = 1;

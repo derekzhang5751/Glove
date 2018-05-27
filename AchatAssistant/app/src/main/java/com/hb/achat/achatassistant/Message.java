@@ -2,7 +2,6 @@ package com.hb.achat.achatassistant;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,13 +41,9 @@ public class Message {
     }
 
     public boolean same(Message msg) {
-        Log.d("AASERVICE", fromUserNick + "<=>" + msg.fromUserNick);
-        Log.d("AASERVICE", content + "<=>" + msg.content);
         if (fromUserNick.equals(msg.fromUserNick) && content.equals(msg.content)) {
-            Log.d("AASERVICE","return true");
             return true;
         } else {
-            Log.d("AASERVICE","return false");
             return false;
         }
     }

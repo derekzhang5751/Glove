@@ -48,31 +48,48 @@ public class Schedule {
             mStep = STEP_BREAK;
             mNextWait = 10;
         } else {
-            if (mCurTime.compareTo("09:00:00") >= 0 && mCurTime.compareTo("24:00:00") < 0) {
-                mLottery = LOTTERY_PK10;
-            } else {
-                mLottery = LOTTERY_XYFT;
-            }
-
             String shortTime = getShortTime();
             //Log.d("AASERVICE", "Schedule, short time: " + shortTime);
             int step = 0;
-            if (shortTime.compareTo("0:00") >= 0 && shortTime.compareTo("0:30") < 0) {
-                step = STEP_LAST_TERM;
-            } else if (shortTime.compareTo("0:30") >= 0 && shortTime.compareTo("0:40") < 0) {
-                step = STEP_WELCOME;
-            } else if (shortTime.compareTo("0:40") >= 0 && shortTime.compareTo("3:00") < 0) {
-                step = STEP_CLASS;
-            } else if (shortTime.compareTo("3:00") >= 0 && shortTime.compareTo("4:00") < 0) {
-                step = STEP_END_TIP;
-            } else if (shortTime.compareTo("4:00") >= 0 && shortTime.compareTo("4:05") < 0) {
-                step = STEP_END;
-            } else if (shortTime.compareTo("4:05") >= 0 && shortTime.compareTo("4:50") < 0) {
-                step = STEP_CHECK;
-            } else if (shortTime.compareTo("4:50") >= 0 && shortTime.compareTo("5:00") < 0) {
-                step = STEP_ISSUE;
+
+            if (mCurTime.compareTo("00:05:00") >= 0 && mCurTime.compareTo("04:05:00") < 0) {
+                mLottery = LOTTERY_XYFT;
+                if (shortTime.compareTo("0:00") >= 0 && shortTime.compareTo("0:30") < 0) {
+                    step = STEP_LAST_TERM;
+                } else if (shortTime.compareTo("0:30") >= 0 && shortTime.compareTo("0:40") < 0) {
+                    step = STEP_WELCOME;
+                } else if (shortTime.compareTo("0:40") >= 0 && shortTime.compareTo("3:00") < 0) {
+                    step = STEP_CLASS;
+                } else if (shortTime.compareTo("3:00") >= 0 && shortTime.compareTo("4:00") < 0) {
+                    step = STEP_END_TIP;
+                } else if (shortTime.compareTo("4:00") >= 0 && shortTime.compareTo("4:05") < 0) {
+                    step = STEP_END;
+                } else if (shortTime.compareTo("4:05") >= 0 && shortTime.compareTo("4:50") < 0) {
+                    step = STEP_CHECK;
+                } else if (shortTime.compareTo("4:50") >= 0 && shortTime.compareTo("5:00") < 0) {
+                    step = STEP_ISSUE;
+                } else {
+                    step = STEP_CLASS;
+                }
             } else {
-                step = STEP_CLASS;
+                mLottery = LOTTERY_PK10;
+                if (shortTime.compareTo("3:00") >= 0 && shortTime.compareTo("3:30") < 0) {
+                    step = STEP_LAST_TERM;
+                } else if (shortTime.compareTo("3:30") >= 0 && shortTime.compareTo("3:40") < 0) {
+                    step = STEP_WELCOME;
+                } else if (shortTime.compareTo("3:40") >= 0) {
+                    step = STEP_CLASS;
+                } else if (shortTime.compareTo("1:00") >= 0 && shortTime.compareTo("2:00") < 0) {
+                    step = STEP_END_TIP;
+                } else if (shortTime.compareTo("2:00") >= 0 && shortTime.compareTo("2:05") < 0) {
+                    step = STEP_END;
+                } else if (shortTime.compareTo("2:05") >= 0 && shortTime.compareTo("2:50") < 0) {
+                    step = STEP_CHECK;
+                } else if (shortTime.compareTo("2:50") >= 0 && shortTime.compareTo("3:00") < 0) {
+                    step = STEP_ISSUE;
+                } else {
+                    step = STEP_CLASS;
+                }
             }
 
             if (mStep < step) {

@@ -121,7 +121,7 @@ class Inquiry extends GloveBase {
         if (empty($this->issueNum)) {
             return $ret;
         } else {
-            $issueNum = intval($this->issueNum) - 1;
+            $issueNum = intval($this->issueNum);// - 1;
             $ret['issue_num'] = strval($issueNum);
         }
         

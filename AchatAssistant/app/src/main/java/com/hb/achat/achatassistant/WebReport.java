@@ -62,6 +62,7 @@ public class WebReport implements Runnable {
             }
 
             int step = schedule.next();
+            wait = schedule.getNextWait();
             //Log.d("AASERVICE", "WebReportThread, step=" + Integer.toString(step));
             if (step == lastStep) {
                 if (step == Schedule.STEP_CLASS || step == Schedule.STEP_END_TIP) {

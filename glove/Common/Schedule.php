@@ -47,26 +47,34 @@ class Schedule {
     }
     
     private function computeStep() {
-        if ($this->curTime >= '00:00:00' && $this->curTime < '00:05:00') {
+        if ($this->curTime >= '00:00:00' && $this->curTime < '00:02:00') {
+            $this->step = STEP_PK10_ORDER;
+        }else if ($this->curTime >= '00:02:00' && $this->curTime < '00:03:00') {
+            $this->step = STEP_PK10_ISSUE;
+        }else if ($this->curTime >= '00:03:00' && $this->curTime < '00:05:00') {
             $this->step = STEP_TURN;
         } else if ($this->curTime >= '00:05:00' && $this->curTime < '04:00:00') {
             $tmp = substr($this->curTime, 4);
-            if ($tmp >= '1:00' && $tmp <= '4:59') {
+            if ($tmp >= '0:00' && $tmp < '4:00') {
                 $this->step = STEP_XYFT_ORDER;
-            } else if ($tmp >= '6:00' && $tmp <= '9:59') {
+            } else if ($tmp >= '5:00' && $tmp < '9:00') {
                 $this->step = STEP_XYFT_ORDER;
+            //} else if ($tmp >= '8:00') {
+            //    $this->step = STEP_XYFT_ORDER;
             } else {
                 $this->step = STEP_XYFT_ISSUE;
             }
-        } else if ($this->curTime >= '04:00:00' && $this->curTime < '09:00:00') {
+        } else if ($this->curTime >= '04:03:00' && $this->curTime < '09:03:00') {
             $this->step = STEP_BREAK;
-        } else if ($this->curTime >= '09:00:00' && $this->curTime < '09:05:00') {
+        } else if ($this->curTime >= '09:03:00' && $this->curTime < '09:08:00') {
             $this->step = STEP_WELCOME;
-        } else if ($this->curTime >= '09:05:00' && $this->curTime < '24:00:00') {
+        } else if ($this->curTime >= '09:08:00') {
             $tmp = substr($this->curTime, 4);
-            if ($tmp >= '1:00' && $tmp <= '4:59') {
+            if ($tmp >= '0:00' && $tmp < '2:00') {
                 $this->step = STEP_PK10_ORDER;
-            } else if ($tmp >= '6:00' && $tmp <= '9:59') {
+            } else if ($tmp >= '3:00' && $tmp < '7:00') {
+                $this->step = STEP_PK10_ORDER;
+            } else if ($tmp >= '8:00') {
                 $this->step = STEP_PK10_ORDER;
             } else {
                 $this->step = STEP_PK10_ISSUE;

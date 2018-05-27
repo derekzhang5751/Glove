@@ -79,7 +79,12 @@ class Inquiry extends GloveBase {
             'user_list' => array()
         );
         $type = $this->getCurrentLotteryType();
-        $nextIssue = db_get_next_issue($type);
+        if (LOTTERY_PK10 == $type) {
+            $nextIssue = db_get_next_issue($type, -3);
+        } else {
+            $nextIssue = db_get_next_issue($type);
+        }
+        
         if ($nextIssue) {
             $issueNum = $nextIssue['issue_num'];
             $ret['issue_num'] = $issueNum;
@@ -118,11 +123,11 @@ class Inquiry extends GloveBase {
             'user_list' => array()
         );
         $issueNum = 0;
-        if (empty($this->issueNum)) {
-            return $ret;
-        } else {
+        if ($this->checkTermIfIssued()) {
             $issueNum = intval($this->issueNum);// - 1;
             $ret['issue_num'] = strval($issueNum);
+        } else {
+            return $ret;
         }
         
         // get all members in the group
@@ -239,4 +244,21 @@ class Inquiry extends GloveBase {
         return intval($balance);
     }
     
+    private function checkTermIfIssued() {
+        if (empty($this->issueNum)) {
+            return false;
+        }
+        
+        $issue = db_get_issue_data($this->issueNum);
+        if ($issue) {
+            $status = intval( $issue['status'] );
+            if ($status == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }

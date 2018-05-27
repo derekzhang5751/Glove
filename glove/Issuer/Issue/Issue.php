@@ -105,7 +105,11 @@ class Issue extends GloveBase {
         }
         $success = true;
         
-        $delay = 0 - intval($this->delay);
+        if (LOTTERY_XYFT == $type) {
+            $delay = 0; // - intval($this->delay);
+        } else {
+            $delay = -3;
+        }
         $this->return['success'] = $success;
         if ($success) {
             $this->return['data']['curLotteryType'] = $type;
@@ -160,7 +164,11 @@ class Issue extends GloveBase {
             $this->return['success'] = true;
         }
         
-        $delay = 0 - intval($this->delay);
+        if (LOTTERY_XYFT == $type) {
+            $delay = 0; // - intval($this->delay);
+        } else {
+            $delay = -3;
+        }
         $nextIssue = db_get_next_issue($type, $delay);
         if ($nextIssue) {
             $this->return['data']['nextIssueType'] = $type;

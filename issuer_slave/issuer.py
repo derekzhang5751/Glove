@@ -24,13 +24,18 @@ def get_active_time():
         if i > 5:
             i = i - 5
         short = "{}:{}".format(i, sec)
-        begin = "{}:00".format(DELAY_MINS)
-        end = "{}:00".format(DELAY_MINS + 1)
+        if lottery.curLotteryType == 1:
+            begin = "0:00"
+            end = "1:00"
+        else:
+            begin = "3:00"
+            end = "4:00"
+
         if short >= begin and short < end:
             active = True
             wait = 60
         else:
-            wait = 10
+            wait = 2
     return active, s_time, wait
 
 

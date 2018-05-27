@@ -307,15 +307,16 @@ class Message extends GloveBase {
         $balance = intval($balance);
         
         $won = db_user_won_amount($user['user_id']);
-        $win = $this->getUserWinAmount($user);
-        $lost = $this->getUserLoseAmount($user);
+        //$win = $this->getUserWinAmount($user);
+        //$lost = $this->getUserLoseAmount($user);
+        $allOrdersCost = db_get_user_orders_cost($user['user_id']);
         
         $balance = floor(floatval($balance));
-        $win = floor(floatval($win));
-        $lost = floor(floatval($lost));
+        $allOrdersCost = intval($allOrdersCost);
+        $won = $won - $allOrdersCost;
         
         $reply = '余额：' . $balance;
-        $reply = sprintf("\n余额：%d\n胜负：%d\n流水：%d", $balance, $won, $win+$lost);
+        $reply = sprintf("\n余额：%d\n胜负：%d\n流水：%d", $balance, $won, $allOrdersCost);
         $this->return['data']['reply'] = $reply;
         $this->return['data']['status'] = COMMAND_SUCCESS;
         

@@ -157,6 +157,9 @@ class Inquiry extends GloveBase {
             'n2' => 0
         );
         
+        // Cancel all orders undealed
+        db_cancel_old_order_undealed();
+        
         $lastIssue = db_get_last_term_issued();
         if ($lastIssue) {
             //$this->return['msg'] = 'SQL:' . $GLOBALS['db']->last();

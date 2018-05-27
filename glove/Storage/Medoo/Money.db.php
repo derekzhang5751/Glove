@@ -57,7 +57,6 @@ function db_money_balance($userId)
     $balance = $GLOBALS['db']->get('money', 'balance',
         [
             'user_id' => $userId,
-            //'status' => 1,
             'ORDER' => ['id' => 'DESC']
         ]);
     if ($balance) {
@@ -103,10 +102,16 @@ function db_won_by_sn($orderSn)
 
 function db_user_won_amount($userId)
 {
+    $curDate = date("Y-m-d");
+    $begin = $curDate . " 00:00:00";
+    $end = $curDate . " 23:59:59";
+    
     $won = $GLOBALS['db']->sum('money', 'amount',
         [
             'user_id' => $userId,
-            'source' => 1
+            'source' => 1,
+            'add_time[>=]' => $begin,
+            'add_time[<=]' => $end
         ]);
     if ($won) {
         return intval($won);

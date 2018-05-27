@@ -74,6 +74,23 @@ function db_update_order_status($orderId, $status)
     }
 }
 
+function db_get_user_orders_cost($userId)
+{
+    $curDate = date("Y-m-d");
+    $begin = $curDate . " 00:00:00";
+    $end = $curDate . " 23:59:59";
+    
+    $sum = $GLOBALS['db']->sum('order', 'amount',
+        [
+            'user_id' => $userId,
+            'status[>]' => 0,
+            'add_time[>=]' => $begin,
+            'add_time[<=]' => $end
+        ]
+    );
+    return $sum;
+}
+
 function db_order_win_sum($userId)
 {
     $sum = $GLOBALS['db']->sum('order', 'amount',
@@ -133,4 +150,18 @@ function db_get_order_for_won($userId, $issueNum)
         ]
     );
     return $orders;
+}
+
+function db_cancel_old_order_undealed()
+{
+    $state = $GLOBALS['db']->update('order', 
+        [
+            'status' => -1
+        ],
+        [
+            'status' => 0,
+            'add_time[<]'  => date("Y-m-d H:i:s")
+        ]
+    );
+    return $state->rowCount();
 }

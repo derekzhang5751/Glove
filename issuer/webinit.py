@@ -16,7 +16,7 @@ class WebInit(WebReport):
         url = "http://" + SERVER_HOST + "/Issuer/Issue/do.php"
         init_json = {
             'act': "init",
-            'delay': DELAY_MINS
+            'delay': 0
         }
 
         resp = self.http_post_md5(url, init_json)

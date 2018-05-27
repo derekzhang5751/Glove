@@ -2,7 +2,6 @@
 #
 import sys, time
 import urllib3
-from config import *
 from model import Lottery
 from webinit import WebInit
 from webissue import WebIssue
@@ -21,7 +20,7 @@ def get_active_time():
         min = s_time[16:17]
         sec = s_time[18:20]
         i = int(min)
-        if i > 5:
+        if i >= 5:
             i = i - 5
         short = "{}:{}".format(i, sec)
         if lottery.curLotteryType == 1:

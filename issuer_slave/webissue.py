@@ -150,7 +150,7 @@ class WebIssue(WebReport):
             'n7': self.lottery.ranking[7],
             'n8': self.lottery.ranking[8],
             'n9': self.lottery.ranking[9],
-            'delay': DELAY_MINS
+            'delay': 0
         }
 
         resp = self.http_post_md5(url, issue_json)

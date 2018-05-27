@@ -271,7 +271,7 @@ class Issue extends GloveBase {
     }
     
     private function initXyft($curDate) {
-        $begin = $curDate . " 13:00:00";
+        $begin = $curDate . " 13:05:00";
         $end = $curDate . " 23:59:59";
         $date = date("ymd", strtotime($begin));
         $allData = array();
@@ -304,8 +304,8 @@ class Issue extends GloveBase {
         $date = date("ymd", strtotime($begin));
         $nextDay = date("Y-m-d", strtotime($end . " +60 minute"));
         $begin = $nextDay . " 00:00:00";
-        $end = $nextDay . " 03:59:59";
-        $tmp = date("Y-m-d H:i:s", strtotime($begin . " +5 minute"));
+        $end = $nextDay . " 04:05:00";
+        $tmp = date("Y-m-d H:i:s", strtotime($begin));
         while ($tmp <= $end) {
             $issueNum = sprintf("%s%03d", $date, $index);
             $index = $index + 1;

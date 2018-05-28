@@ -503,6 +503,7 @@ class Issue extends GloveBase {
                     db_update_order_status($order['order_id'], 2);
                     //$amount = $order['amount'];
                     $amount = $this->computeRateOfWin($order);
+                    $amount = $amount - $order['amount'];
                 } else {
                     db_update_order_status($order['order_id'], 1);
                     $amount = 0 - $order['amount'];
@@ -687,7 +688,7 @@ class Issue extends GloveBase {
                     $rate = 40.0;
                     break;
                 default:
-                    $rate = 8.0;
+                    $rate = 1.95;
                     break;
             }
         } else if ($line == "1" || $line == "2") {

@@ -313,7 +313,6 @@ class Message extends GloveBase {
         
         $balance = floor(floatval($balance));
         $allOrdersCost = intval($allOrdersCost);
-        $won = $won - $allOrdersCost;
         
         $reply = '余额：' . $balance;
         $reply = sprintf("\n余额：%d\n胜负：%d\n流水：%d", $balance, $won, $allOrdersCost);

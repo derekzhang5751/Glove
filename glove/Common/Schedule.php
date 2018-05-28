@@ -85,7 +85,7 @@ class Schedule {
     }
     
     private function computePk10Issue() {
-        $issue = db_get_next_issue(0);
+        $issue = db_get_next_issue(0, -3);
         if ($issue) {
             $this->issueNum = $issue['issue_num'];
         } else {

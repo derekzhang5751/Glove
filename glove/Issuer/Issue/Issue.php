@@ -629,13 +629,21 @@ class Issue extends GloveBase {
     private function computeRateOfWin($order) {
         $amount = $order['amount'];
         $size = $amount; // floatval($amount) / 5.0;
-        $rate = 1.5;
+        $rate = 1.0;
         
         $line = $order['line'];
         $value = $order['value'];
         if ($line == "99") {
             // 和值
             switch ($value) {
+                case 'Z':
+                case 'S':
+                    $rate = 2.1;
+                    break;
+                case 'A':
+                case 'D':
+                    $rate = 1.7;
+                    break;
                 case '3':
                     $rate = 40.0;
                     break;
@@ -688,27 +696,14 @@ class Issue extends GloveBase {
                     $rate = 40.0;
                     break;
                 default:
-                    $rate = 1.95;
+                    $rate = 1.0;
                     break;
             }
-        } else if ($line == "1" || $line == "2") {
-            // 冠、亚
-            if ($value == "Z" || $value == "S") {
-                // 大、双
-                $rate = 2.1;
-            } else if ($value == "A" || $value == "D") {
-                // 小、单
-                $rate = 1.7;
-            } else {
-                // 数字
-                $rate = 9.72;
-            }
         } else {
-            // other
-            if (is_numeric($value)) {
-                $rate = 9.72;
-            } else {
+            if ($value == "Z" || $value == "S" || $value == "A" || $value == "D") {
                 $rate = 1.95;
+            } else {
+                $rate = 9.72;
             }
         }
         

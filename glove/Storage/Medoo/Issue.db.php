@@ -62,16 +62,19 @@ function db_get_last_issue($type)
     return $issue;
 }
 
-function db_get_last_term_issued()
+function db_get_last_term_issued($type, $maxSize)
 {
-    $issue = $GLOBALS['db']->get('issues',
-        ['type', 'issue_num', 'n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'issue_time'],
+    $issueList = $GLOBALS['db']->select('issues',
+        ['type', 'issue_num', 'n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'status', 'issue_time'],
         [
+            'issue_time[>]' => date("Y-m-d 00:00:00"),
+            'type' => $type,
             'status' => 1,
-            'ORDER' => ['issue_time' => 'DESC']
+            'ORDER' => ['issue_time' => 'DESC'],
+            'LIMIT' => $maxSize
         ]
     );
-    return $issue;
+    return $issueList;
 }
 
 function db_update_issue($type, $issueNum, $arrayData)

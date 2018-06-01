@@ -150,25 +150,34 @@ class Inquiry extends GloveBase {
     }
     
     private function doLastTerm() {
-        $ret = array(
-            'issue_num' => '',
-            'issue_time' => '',
-            'n0' => 0,
-            'n1' => 0,
-            'n2' => 0
-        );
+        $ret = array();
+        $type = $this->getCurrentLotteryType();
         
         // Cancel all orders undealed
         db_cancel_old_order_undealed();
         
-        $lastIssue = db_get_last_term_issued();
-        if ($lastIssue) {
+        $issueList = db_get_last_term_issued($type, 15);
+        if ($issueList) {
             //$this->return['msg'] = 'SQL:' . $GLOBALS['db']->last();
-            $ret['issue_num'] = $lastIssue['issue_num'];
-            $ret['issue_time'] = $lastIssue['issue_time'];
-            $ret['n0'] = $lastIssue['n0'];
-            $ret['n1'] = $lastIssue['n1'];
-            $ret['n2'] = $lastIssue['n2'];
+            foreach ($issueList as $item) {
+                $issue = array(
+                    'type' => $type,
+                    'issue_num' => $item['issue_num'],
+                    'issue_time' => $item['issue_time'],
+                    'status' => $item['status'],
+                    'n0' => $item['n0'],
+                    'n1' => $item['n1'],
+                    'n2' => $item['n2'],
+                    'n3' => $item['n3'],
+                    'n4' => $item['n4'],
+                    'n5' => $item['n5'],
+                    'n6' => $item['n6'],
+                    'n7' => $item['n7'],
+                    'n8' => $item['n8'],
+                    'n9' => $item['n9'],
+                );
+                array_push($ret, $issue);
+            }
         }
         
         return $ret;

@@ -3,12 +3,15 @@ package com.hb.achat.achatassistant;
 import android.accessibilityservice.AccessibilityService;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +71,7 @@ public class AAService extends AccessibilityService {
         WebReport.ThreadParameter tp = new WebReport.ThreadParameter();
         tp.mAchatDao = mAchatDao;
         tp.mHandle = mHandle;
+        tp.mContext = getApplicationContext();
         mWebReport = new WebReport(tp);
         mWebReport.start();
     }
@@ -160,6 +164,55 @@ public class AAService extends AccessibilityService {
         }
     }
 
+    private boolean sendIssuePicture() {
+        boolean success = false;
+        AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+        if (!AchatLayout.clickSendMultiMedia(rootNode)) {
+            return false;
+        }
+        // Click Gallery Icon
+        success = false;
+        for (int i=0; i<8; i++) {
+            Tools.sleep(3500);
+            rootNode = getRootInActiveWindow();
+            if (AchatLayout.clickGalleryIcon(rootNode)) {
+                success = true;
+                break;
+            }
+        }
+        if (!success) {
+            return false;
+        }
+        // Click First Image
+        success = false;
+        for (int i=0; i<8; i++) {
+            Tools.sleep(2000);
+            rootNode = getRootInActiveWindow();
+            if (AchatLayout.clickFirstImageChecked(rootNode)) {
+                success = true;
+                break;
+            }
+        }
+        if (!success) {
+            return false;
+        }
+        // Click Send Image Button
+        success = false;
+        for (int i=0; i<8; i++) {
+            Tools.sleep(2000);
+            rootNode = getRootInActiveWindow();
+            if (AchatLayout.clickSendImageBtn(rootNode)) {
+                success = true;
+                break;
+            }
+        }
+        if (!success) {
+            return false;
+        }
+
+        return true;
+    }
+
     private void initMessageList() {
         mMessageListReady = false;
         mDbHelper = new DbHelper(this);
@@ -178,6 +231,16 @@ public class AAService extends AccessibilityService {
             String text = "";
             switch (threadMsg.what) {
                 case Schedule.STEP_LAST_TERM:
+                    text = pthis.mWebReport.getSendText();
+                    if (!text.isEmpty()) {
+                        pthis.sendChatMessage(text);
+                    }
+                    if (threadMsg.arg1 == 1) {
+                        // Send image
+                        Tools.sleep(300);
+                        pthis.sendIssuePicture();
+                    }
+                    break;
                 case Schedule.STEP_WELCOME:
                 case Schedule.STEP_END_TIP:
                 case Schedule.STEP_END:

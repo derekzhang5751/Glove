@@ -37,7 +37,7 @@ public class Schedule {
         mCurTime = Tools.getCurTimeFormatted();
         //Log.d("AASERVICE", "Schedule, current time: " + mCurTime);
         if (mStep == STEP_ISSUE) {
-            mStep = STEP_LAST_TERM;
+            mStep = STEP_BREAK;
         }
 
         if (mStep == STEP_NULL) {
@@ -100,7 +100,7 @@ public class Schedule {
 
             switch (mStep) {
                 case STEP_LAST_TERM:
-                    mNextWait = 1;
+                    mNextWait = 20;
                     break;
                 case STEP_WELCOME:
                     mNextWait = 1;

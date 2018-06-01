@@ -1,5 +1,6 @@
 package com.hb.achat.achatassistant;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -17,14 +18,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WebReport implements Runnable {
+    //public static final int MSG_UPDATE_MEDIA_LIB = 200;
     public static final String SERVER_HOST = "http://205.209.167.174:8089";
     public boolean mPauseFlag;
     private boolean mExitFlag;
     private Thread mThread;
     private String mThreadName;
 
+    private Context mContext;
     private String mSendText;
     private AchatDao mAchatDao;
     private Handler mHandler;
@@ -33,6 +38,7 @@ public class WebReport implements Runnable {
     public static class ThreadParameter {
         public AchatDao mAchatDao;
         public Handler mHandle;
+        public Context mContext;
     }
 
     WebReport(ThreadParameter tp) {
@@ -42,6 +48,7 @@ public class WebReport implements Runnable {
         mThreadName = "WebReportThread";
         mAchatDao = tp.mAchatDao;
         mHandler = tp.mHandle;
+        mContext = tp.mContext;
     }
 
     @Override
@@ -49,7 +56,7 @@ public class WebReport implements Runnable {
         Log.d("AASERVICE", "WebReportThread start");
         Schedule schedule = new Schedule();
         int lastStep = Schedule.STEP_NULL;
-        int wait = schedule.getNextWait();
+        int wait;
 
         while (!mExitFlag) {
             if (mPauseFlag) {
@@ -150,30 +157,88 @@ public class WebReport implements Runnable {
         //
     }
 
+    private boolean drawIssueHistory(String strIssueList) {
+        List<Issue> issueList = new ArrayList<>();
+        /*
+        Issue i1 = new Issue();
+        i1.issueNum = "123456";
+        i1.num[0] = 9;
+        i1.num[1] = 2;
+        i1.num[2] = 4;
+        i1.num[3] = 5;
+        i1.num[4] = 6;
+        i1.num[5] = 1;
+        i1.num[6] = 8;
+        i1.num[7] = 10;
+        i1.num[8] = 3;
+        i1.num[9] = 7;
+        issueList.add(i1);
+        Issue i2 = new Issue();
+        i2.issueNum = "20180531156";
+        i2.num[0] = 5;
+        i2.num[1] = 2;
+        i2.num[2] = 7;
+        i2.num[3] = 6;
+        i2.num[4] = 3;
+        i2.num[5] = 9;
+        i2.num[6] = 10;
+        i2.num[7] = 8;
+        i2.num[8] = 1;
+        i2.num[9] = 4;
+        issueList.add(i2);
+        */
+        try {
+            JSONObject jsonObject = new JSONObject(strIssueList);
+            //inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
+            JSONArray arrayIssue = jsonObject.getJSONArray("data");
+            int size = arrayIssue.length();
+            for (int i=0; i<size; i++) {
+                JSONObject objIssue = arrayIssue.getJSONObject(i);
+                if (objIssue != null) {
+                    Issue issue = new Issue();
+                    issue.issueNum = objIssue.getString("issue_num");
+                    issue.issueTime = objIssue.getString("issue_time");
+                    issue.status = objIssue.getInt("status");
+                    issue.num[0] = objIssue.getInt("n0");
+                    issue.num[1] = objIssue.getInt("n1");
+                    issue.num[2] = objIssue.getInt("n2");
+                    issue.num[3] = objIssue.getInt("n3");
+                    issue.num[4] = objIssue.getInt("n4");
+                    issue.num[5] = objIssue.getInt("n5");
+                    issue.num[6] = objIssue.getInt("n6");
+                    issue.num[7] = objIssue.getInt("n7");
+                    issue.num[8] = objIssue.getInt("n8");
+                    issue.num[9] = objIssue.getInt("n9");
+
+                    issueList.add(issue);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        IssueHistoryDraw draw = new IssueHistoryDraw();
+        draw.init(issueList);
+        draw.draw();
+        return draw.saveToFile(mContext);
+    }
+
     private void doLastTerm() {
-        mSendText = "上期回顾";
+        mSendText = "往期回顾";
+        Message msg = new Message();
+        msg.what = Schedule.STEP_LAST_TERM;
+        msg.arg1 = 0;
 
         Inquiry inquiry = new Inquiry();
         inquiry.mAction = "lastterm";
         inquiry.mIssueNum = "";
         String response = reportInquery(inquiry);
         if (!TextUtils.isEmpty(response)) {
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
-                mSendText = mSendText + "\n奖期：" + inquiry.mIssueNum;
-
-                mSendText = mSendText + "\n冠 军： " + jsonObject.getJSONObject("data").getString("n0");
-                mSendText = mSendText + "\n亚 军： " + jsonObject.getJSONObject("data").getString("n1");
-                mSendText = mSendText + "\n季 军： " + jsonObject.getJSONObject("data").getString("n2");
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if ( drawIssueHistory(response) ) {
+                msg.arg1 = 1;
             }
         }
 
-        Message msg = new Message();
-        msg.what = Schedule.STEP_LAST_TERM;
         mHandler.sendMessage(msg);
     }
 

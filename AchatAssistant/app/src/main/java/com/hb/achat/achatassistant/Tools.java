@@ -106,4 +106,12 @@ public class Tools {
         return result;
     }
 
+    public static void sleep(long wait) {
+        try {
+            Thread.sleep(wait);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

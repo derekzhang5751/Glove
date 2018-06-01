@@ -1,13 +1,21 @@
 package com.hb.achat.achatassistant;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -183,24 +191,27 @@ public class IssueHistoryDraw {
         return mBitmap;
     }
 
-    public boolean saveToFile() {
-        String fileName = "";
-        if (mRowSize > 0) {
+    public boolean saveToFile(Context context) {
+        String fileName = "issue_history.jpg";
+        /*if (mRowSize > 0) {
             Issue issue = mIssueList.get(0);
             fileName = issue.issueNum + ".jpg";
         } else {
             return false;
         }
-        Log.d("IssueHistoryDraw", "FileName: " + fileName);
+        Log.d("IssueHistoryDraw", "FileName: " + fileName);*/
 
         String filePath = Environment.getExternalStorageDirectory().getPath();
         filePath = filePath + "/issuepic";
-        filePath = "/data/data/com.hb.achat.drawissuehistory/files/issuepic";
+        //filePath = "/data/data/com.hb.achat.drawissuehistory/files/issuepic";
         if (!makeSurePathExist(filePath)) {
             return false;
         }
         filePath = filePath + "/" + fileName;
         Log.d("IssueHistoryDraw", "FilePath: " + filePath);
+
+        // Delete picture from image literary
+        deletePicture(filePath, context);
 
         FileOutputStream out = null;
         boolean success = false;
@@ -222,6 +233,16 @@ public class IssueHistoryDraw {
             }
         }
 
+        // update system gallery
+        if (success) {
+            try {
+                MediaStore.Images.Media.insertImage(context.getContentResolver(), filePath, fileName, "开奖历史");
+                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + filePath)));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
         return success;
     }
 
@@ -239,5 +260,28 @@ public class IssueHistoryDraw {
                 return false;
             }
         }
+    }
+
+    private boolean deletePicture(String filePath, Context context) {
+        ContentResolver resolver = context.getContentResolver();
+        Cursor cursor = MediaStore.Images.Media.query(
+                resolver,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[] { MediaStore.Images.Media._ID },
+                MediaStore.Images.Media.DATA + "=?",
+                new String[] { filePath }, null);
+        boolean result = false;
+        if (cursor.moveToFirst()) {
+            long id = cursor.getLong(0);
+            Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            Uri uri = ContentUris.withAppendedId(contentUri, id);
+            int count = resolver.delete(uri, null, null);
+            result = count == 1;
+        } else {
+            File file = new File(filePath);
+            result = file.delete();
+        }
+
+        return result;
     }
 }

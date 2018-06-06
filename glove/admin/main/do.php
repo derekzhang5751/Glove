@@ -14,7 +14,7 @@ $LifeCfg = array(
     'ADMIN_LEVEL'    => 1,
     'DB_TYPE'        => 'Medoo',
     'LOAD_DB'        => array(
-        'Message'
+        'User', 'Money', 'Order'
     ),
     'LOAD_LIB'       => array(
         'Bricklayer/Lib/network.php',

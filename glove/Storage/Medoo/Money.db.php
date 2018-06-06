@@ -119,3 +119,22 @@ function db_user_won_amount($userId)
         return 0;
     }
 }
+
+function db_user_won_amount_by_period($userId, $dayBegin, $dayEnd)
+{
+    $begin = $dayBegin . " 00:00:00";
+    $end = $dayEnd . " 23:59:59";
+    
+    $won = $GLOBALS['db']->sum('money', 'amount',
+        [
+            'user_id' => $userId,
+            'source' => 1,
+            'add_time[>=]' => $begin,
+            'add_time[<=]' => $end
+        ]);
+    if ($won) {
+        return intval($won);
+    } else {
+        return 0;
+    }
+}

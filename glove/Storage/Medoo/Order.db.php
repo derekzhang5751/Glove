@@ -91,6 +91,22 @@ function db_get_user_orders_cost($userId)
     return $sum;
 }
 
+function db_get_user_orders_cost_by_period($userId, $dayBegin, $dayEnd)
+{
+    $begin = $dayBegin . " 00:00:00";
+    $end = $dayEnd . " 23:59:59";
+    
+    $sum = $GLOBALS['db']->sum('order', 'amount',
+        [
+            'user_id' => $userId,
+            'status[>]' => 0,
+            'add_time[>=]' => $begin,
+            'add_time[<=]' => $end
+        ]
+    );
+    return $sum;
+}
+
 function db_order_win_sum($userId)
 {
     $sum = $GLOBALS['db']->sum('order', 'amount',

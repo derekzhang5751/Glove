@@ -25,7 +25,9 @@ class main extends GloveBase {
     }
     
     protected function process() {
-        //
+        if ($this->action == 'main') {
+            //
+        }
         return true;
     }
     

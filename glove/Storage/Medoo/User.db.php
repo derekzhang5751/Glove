@@ -7,7 +7,7 @@
 function db_get_user_list()
 {
     $users = $GLOBALS['db']->select('user',
-        ['user_id', 'user_name', 'nick_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name'],
+        ['user_id', 'user_name', 'nick_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name', 'role'],
         [
             'ORDER' => ['user_id' => 'ASC']
         ]

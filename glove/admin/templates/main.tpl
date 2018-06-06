@@ -8,7 +8,7 @@
     <!--body-->
     <frameset rows="35,*" framespacing="0" border="0">
         <frame src="do.php?act=head" id="header-frame" name="header-frame" frameborder="no" scrolling="no">
-        <frameset cols="180, *" framespacing="0" border="0" id="frame-body">
+        <frameset cols="200, *" framespacing="0" border="0" id="frame-body">
             <frame src="do.php?act=menu" id="menu-frame" name="menu-frame" frameborder="no" scrolling="yes">
             <frame src="do.php?act=main" id="main-frame" name="main-frame" frameborder="no" scrolling="yes">
         </frameset>

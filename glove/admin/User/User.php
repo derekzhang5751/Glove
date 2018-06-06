@@ -40,6 +40,7 @@ class User extends GloveBase {
         switch ($this->action) {
             case 'list':
                 //exit( print_r($this->return['data']['UserList'], true) );
+                $GLOBALS['smarty']->assign("arrRoles", array(0 => '普通用户', 1 => '机器用户'));
                 $GLOBALS['smarty']->assign("UserList", $this->return['data']['UserList']);
                 $GLOBALS['smarty']->display('user_list.tpl');
                 break;

@@ -25,7 +25,8 @@ class GloveBase extends \Bricker\RequestLifeCircle {
         if ($GLOBALS['LifeCfg']['ADMIN_LEVEL'] > 0) {
             if ($this->userId <= 0 && $this->adminId <= 0) {
                 // redirect to login page
-                header("Location: /admin/login/do.php");
+                //header("Location: /admin/login/do.php");
+                echo "<script>window.top.location.href='/admin/login/do.php'</script>";
                 exit();
             }
         }

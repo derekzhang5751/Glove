@@ -14,13 +14,14 @@ $LifeCfg = array(
     'ADMIN_LEVEL'    => 1,
     'DB_TYPE'        => 'Medoo',
     'LOAD_DB'        => array(
-        'User'
+        'User', 'Money', 'Order'
     ),
     'LOAD_LIB'       => array(
         'Bricklayer/Lib/network.php',
         'Common/constants.php',
         'Common/GloveBase.php',
-        'Common/GloveSession.php'
+        'Common/GloveSession.php',
+        'Common/MoUser.php'
     )
 );
 

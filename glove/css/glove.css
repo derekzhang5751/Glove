@@ -2,3 +2,17 @@
     Created on : 5-Jun-2018, 5:28:24 PM
     Author     : derek
 */
+table {
+    border: 1px solid #7faaf4;
+    border-collapse: collapse;
+    width: 80%;
+}
+
+tr td {
+    border: 1px solid #7faaf4;
+    padding: 0em 0em;
+}
+
+tr {
+    height: 30px;
+}

@@ -39,6 +39,17 @@ function db_get_user($userName)
     return $user;
 }
 
+function db_get_user_by_id($userId)
+{
+    $user = $GLOBALS['db']->get('user',
+        ['user_id', 'user_name', 'nick_name', 'password', 'reg_time', 'last_time', 'achat_name', 'group_name', 'role'],
+        [
+            'user_id' => $userId,
+        ]
+    );
+    return $user;
+}
+
 function db_user_insert($user)
 {
     $data = array(
@@ -69,4 +80,21 @@ function db_get_users_by_group($achat, $group)
         ]
     );
     return $users;
+}
+
+function db_set_user_role($userId, $role)
+{
+    $state = $GLOBALS['db']->update('user', 
+        [
+            'role' => $role,
+        ],
+        [
+            'user_id' => $userId
+        ]
+    );
+    if ($state->rowCount() >= 0) {
+        return true;
+    } else {
+        return false;
+    }
 }

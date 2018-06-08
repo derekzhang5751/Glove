@@ -17,7 +17,6 @@ function compare_user_data($a, $b) {
 class main extends GloveBase {
     private $action;
     private $userName;
-    private $password;
     private $dayBegin;
     private $dayEnd;
     
@@ -30,8 +29,7 @@ class main extends GloveBase {
     
     protected function prepareRequestParams() {
         $this->action = isset($_REQUEST['act']) ? trim($_REQUEST['act']) : '';
-        $this->userName = isset($_POST['username']) ? trim($_POST['username']) : '';
-        $this->password = isset($_POST['password']) ? trim($_POST['password']) : '';
+        //$this->userName = isset($_POST['username']) ? trim($_POST['username']) : '';
         $this->dayBegin = isset($_REQUEST['daybegin']) ? trim($_REQUEST['daybegin']) : '';
         $this->dayEnd = isset($_REQUEST['dayend']) ? trim($_REQUEST['dayend']) : '';
         
@@ -39,6 +37,7 @@ class main extends GloveBase {
     }
     
     protected function process() {
+        $this->userName = $GLOBALS['session']->getSessionData('admin_name');
         if ($this->action == 'main') {
             //
         } else if ($this->action == 'monitor') {

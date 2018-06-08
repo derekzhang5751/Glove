@@ -3,6 +3,7 @@
         <title>管理后台</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="/css/glove.css" />
     </head>
     <body>
         <p>运营数据统计</p>
@@ -11,7 +12,7 @@
             <span>&nbsp;至&nbsp;&nbsp;</span><input type="date" name="dayend" min="2018-01-01" value="{$dayEnd}">
             <input type="submit" value="统计">
         </form>
-        <table border="1" cellspacing="0" bordercolor="#000000" width="80%" style="border-collapse:collapse;">
+        <table>
             <tr>
                 <td>编号</td>
                 <td>用户</td>

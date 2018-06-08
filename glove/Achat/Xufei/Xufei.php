@@ -35,6 +35,7 @@ class Xufei extends GloveBase {
         // read record of charge
         $charge = db_get_charge_by_sn($this->chargeId);
         if ($charge) {
+            /*
             $this->chargeAmount = $charge['amount'];
             $this->userName = $charge['user_name'];
             
@@ -52,10 +53,13 @@ class Xufei extends GloveBase {
                 'sn' => $charge['charge_sn'],
             );
             $moneyId = db_money_insert($money);
-            if ($moneyId === false) {
+             */
+            $moUser = new MoUser();
+            $ret = $moUser->doUserCharge($charge['user_id'], $charge['amount'], OPT_SOURCE_AUTO, $charge['charge_sn']);
+            if ($ret === false) {
                 $this->msg = "充值失败";
             } else {
-                db_set_charge_status($charge['charge_sn'], 1);
+                //db_set_charge_status($charge['charge_sn'], 1);
                 $this->msg = "充值成功";
             }
         } else {

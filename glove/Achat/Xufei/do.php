@@ -19,6 +19,7 @@ $LifeCfg = array(
         'Bricklayer/Lib/network.php',
         'Common/constants.php',
         'Common/GloveBase.php',
+        'Common/MoUser.php'
     )
 );
 

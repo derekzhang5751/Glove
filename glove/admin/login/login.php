@@ -100,6 +100,7 @@ class login extends GloveBase {
         $user = db_check_admin_password($this->userName, $this->password);
         if ($user) {
             $GLOBALS['session']->setSessionData('admin_id', $user['admin_id']);
+            $GLOBALS['session']->setSessionData('admin_name', $user['user_name']);
             return true;
         } else {
             return false;

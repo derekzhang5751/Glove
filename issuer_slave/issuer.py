@@ -14,7 +14,7 @@ def get_active_time():
     s_time = time.strftime("[%Y-%m-%d %H:%M:%S]", cur_time)
 
     s_tmp = s_time[12:20]
-    if s_tmp < "09:00:00" and s_tmp > "04:05:00":
+    if s_tmp < "09:00:00" and s_tmp > "04:07:00":
         active = False
     else:
         min = s_time[16:17]

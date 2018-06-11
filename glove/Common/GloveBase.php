@@ -40,11 +40,13 @@ class GloveBase extends \Bricker\RequestLifeCircle {
         
         $this->md5 = isset($_POST['md5']) ? trim($_POST['md5']) : '';
         if ( empty($this->md5) ) {
+            //exit('md5:'.$this->md5);
             return false;
         }
         
         $data = isset($_POST['data']) ? trim($_POST['data']) : '';
         if ( empty($data) ) {
+            //exit('data:'.$data);
             return false;
         } else {
             //exit($data);

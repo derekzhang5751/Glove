@@ -4,24 +4,30 @@ package com.hb.achat.achatassistant;
 import android.util.Log;
 
 public class Schedule {
-    public static final int STEP_NULL = -1;
-    public static final int STEP_INIT_ENV = 0;
-    public static final int STEP_BREAK = 1;
+    public static final int STEP_NULL      = -1;
+    public static final int STEP_INIT_ENV  = 0;
+    public static final int STEP_BREAK     = 1;
     public static final int STEP_LAST_TERM = 2;
-    public static final int STEP_WELCOME = 3;
-    public static final int STEP_CLASS = 4;
-    public static final int STEP_END_TIP = 5;
-    public static final int STEP_END = 6;
-    public static final int STEP_CHECK = 7;
-    public static final int STEP_ISSUE = 8;
+    public static final int STEP_WELCOME   = 3;
+    public static final int STEP_CLASS     = 4;
+    public static final int STEP_END_TIP   = 5;
+    public static final int STEP_END       = 6;
+    public static final int STEP_CHECK     = 7;
+    public static final int STEP_ISSUE     = 8;
+    public static final int STEP_TURN      = 9;
 
     public static final int LOTTERY_PK10 = 0;
     public static final int LOTTERY_XYFT = 1;
 
+    private long mServerTimeOffset = 0;
     private int mStep = STEP_NULL;
     private int mLottery = LOTTERY_PK10;
     private String mCurTime = "";
     private int mNextWait = 10;
+
+    public void setTimeOffset(long timeOffset) {
+        mServerTimeOffset = timeOffset;
+    }
 
     private String getShortTime() {
         String min = mCurTime.substring(4, 5);
@@ -34,7 +40,7 @@ public class Schedule {
     }
 
     public int next() {
-        mCurTime = Tools.getCurTimeFormatted();
+        mCurTime = Tools.getCurTimeFormatted(mServerTimeOffset);
         //Log.d("AASERVICE", "Schedule, current time: " + mCurTime);
         if (mStep == STEP_ISSUE) {
             mStep = STEP_BREAK;
@@ -49,6 +55,9 @@ public class Schedule {
         if (mCurTime.compareTo("04:00:00") >= 0 && mCurTime.compareTo("09:00:00") < 0) {
             mStep = STEP_BREAK;
             mNextWait = 10;
+        } else if (mCurTime.compareTo("00:03:00") >= 0 && mCurTime.compareTo("00:05:00") < 0) {
+            mStep = STEP_TURN;
+            mNextWait = 2;
         } else {
             String shortTime = getShortTime();
             //Log.d("AASERVICE", "Schedule, short time: " + shortTime);
@@ -116,6 +125,9 @@ public class Schedule {
                     break;
                 case STEP_ISSUE:
                     mNextWait = 5;
+                    break;
+                case STEP_TURN:
+                    mNextWait = 2;
                     break;
                 default:
                     mNextWait = 1;

@@ -3,15 +3,12 @@ package com.hb.achat.achatassistant;
 import android.accessibilityservice.AccessibilityService;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,16 +31,14 @@ public class AAService extends AccessibilityService {
         //String msg = "";
         switch (eventType) {
             case AccessibilityEvent.TYPE_VIEW_SCROLLED:
-                if (mMessageListReady) {
-                    refreshMessageInGroup();
-                }
-                break;
-            case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 //if (mMessageListReady) {
                 //    refreshMessageInGroup();
                 //}
-                //msg = "TYPE_WINDOW_CONTENT_CHANGED " + event.getClassName().toString();
-                //showToastMessage(msg);
+                break;
+            case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
+                if (mMessageListReady) {
+                    refreshMessageInGroup();
+                }
                 break;
             //case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
             //    msg = "TYPE_WINDOW_STATE_CHANGED " + event.getClassName().toString();
@@ -113,6 +108,7 @@ public class AAService extends AccessibilityService {
         Log.d("AASERVICE", "=============== AAService, refresh message ==============");
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         if (AchatLayout.isTargetGroupByName(rootNode, mGroupName)) {
+            Log.d("AASERVICE", "AAService, DOES IN achat");
             if (mWebReport.mPauseFlag) {
                 mWebReport.mPauseFlag = false;
             }
@@ -147,7 +143,7 @@ public class AAService extends AccessibilityService {
                 //Log.d("AASERVICE", "AAService, get message list failed");
             }
         } else {
-            //Log.d("AASERVICE", "AAService, not in achat");
+            Log.d("AASERVICE", "AAService, NOT IN achat");
             if (!mWebReport.mPauseFlag) {
                 mWebReport.mPauseFlag = true;
             }
@@ -246,6 +242,7 @@ public class AAService extends AccessibilityService {
                 case Schedule.STEP_END:
                 case Schedule.STEP_CHECK:
                 case Schedule.STEP_ISSUE:
+                case Schedule.STEP_TURN:
                     text = pthis.mWebReport.getSendText();
                     if (!text.isEmpty()) {
                         pthis.sendChatMessage(text);
@@ -260,6 +257,9 @@ public class AAService extends AccessibilityService {
                 case DbHelper.MSG_INIT_DONE:
                     pthis.mMessageListReady = true;
                     pthis.showToastMessage("服务初始化完成");
+                    break;
+                case Schedule.STEP_INIT_ENV:
+                    pthis.showToastMessage("同步时间差: " + Integer.toString(threadMsg.arg1) + " 秒");
                     break;
                 default:
                     break;

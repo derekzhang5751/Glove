@@ -19,11 +19,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class WebReport implements Runnable {
     //public static final int MSG_UPDATE_MEDIA_LIB = 200;
     public static final String SERVER_HOST = "http://205.209.167.174:8089";
+    public long mServerTimeOffset = 0;
     public boolean mPauseFlag;
     private boolean mExitFlag;
     private Thread mThread;
@@ -87,6 +89,9 @@ public class WebReport implements Runnable {
             switch (step) {
                 case Schedule.STEP_INIT_ENV:
                     doInitEnv();
+                    if (mServerTimeOffset > 0) {
+                        schedule.setTimeOffset(mServerTimeOffset);
+                    }
                     break;
                 case Schedule.STEP_LAST_TERM:
                     doLastTerm();
@@ -108,6 +113,9 @@ public class WebReport implements Runnable {
                     break;
                 case Schedule.STEP_ISSUE:
                     doIssue();
+                    break;
+                case Schedule.STEP_TURN:
+                    doTurning();
                     break;
                 default:
                     try {
@@ -154,39 +162,31 @@ public class WebReport implements Runnable {
     }
 
     private void doInitEnv() {
-        //
+        // sync time with server
+        long tBegin = new Date().getTime();
+        //Log.d("AASERVICE", "Time begin: " + Long.toString(tBegin));
+        long serverUTC = getServerUTC();
+        //Log.d("AASERVICE", "Server UTC: " + Long.toString(serverUTC));
+        long tEnd = new Date().getTime();
+        //Log.d("AASERVICE", "Time end: " + Long.toString(tEnd));
+
+        if (serverUTC > 0) {
+            long cost = (tEnd - tBegin) / 2;
+            long offset = serverUTC - tBegin - cost;
+            mServerTimeOffset = offset;
+        } else {
+            mServerTimeOffset = 0;
+        }
+
+        Message msg = new Message();
+        msg.what = Schedule.STEP_INIT_ENV;
+        msg.arg1 = (int)(mServerTimeOffset/1000);
+        mHandler.sendMessage(msg);
     }
 
     private boolean drawIssueHistory(String strIssueList) {
         List<Issue> issueList = new ArrayList<>();
-        /*
-        Issue i1 = new Issue();
-        i1.issueNum = "123456";
-        i1.num[0] = 9;
-        i1.num[1] = 2;
-        i1.num[2] = 4;
-        i1.num[3] = 5;
-        i1.num[4] = 6;
-        i1.num[5] = 1;
-        i1.num[6] = 8;
-        i1.num[7] = 10;
-        i1.num[8] = 3;
-        i1.num[9] = 7;
-        issueList.add(i1);
-        Issue i2 = new Issue();
-        i2.issueNum = "20180531156";
-        i2.num[0] = 5;
-        i2.num[1] = 2;
-        i2.num[2] = 7;
-        i2.num[3] = 6;
-        i2.num[4] = 3;
-        i2.num[5] = 9;
-        i2.num[6] = 10;
-        i2.num[7] = 8;
-        i2.num[8] = 1;
-        i2.num[9] = 4;
-        issueList.add(i2);
-        */
+
         try {
             JSONObject jsonObject = new JSONObject(strIssueList);
             //inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
@@ -239,6 +239,13 @@ public class WebReport implements Runnable {
             }
         }
 
+        mHandler.sendMessage(msg);
+    }
+
+    private void doTurning() {
+        mSendText = "转场中 ...";
+        Message msg = new Message();
+        msg.what = Schedule.STEP_TURN;
         mHandler.sendMessage(msg);
     }
 
@@ -372,6 +379,52 @@ public class WebReport implements Runnable {
         Message msg = new Message();
         msg.what = Schedule.STEP_ISSUE;
         mHandler.sendMessage(msg);
+    }
+
+    private long getServerUTC() {
+        long serverUTC = 0;
+
+        String json = "";
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("action", "GET_UTC");
+            jsonObject.put("achat_name", Tools.ACHAT_NAME);
+            jsonObject.put("group_name", Tools.GROUP_NAME);
+
+            json = jsonObject.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String sUrl = SERVER_HOST + "/Achat/SyncTime/do.php";
+        String postData = "";
+        String base64 = Base64.encodeToString(json.getBytes(), Base64.DEFAULT);
+        base64 = base64.replace("\r", "");
+        base64 = base64.replace("\n", "");
+        String md5 = Tools.md5(base64 + Tools.MD5_KEY);
+
+        String urlEncode = "";
+        try {
+            urlEncode = URLEncoder.encode(base64, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        postData = "version=1.0&DeviceType=1&md5=" + md5 + "&data=" + urlEncode;
+        String response = httpPost(sUrl, postData);
+        //Log.d("AASERVICE", "Server UTC response: " + response);
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                jsonObject = new JSONObject(response);
+                double dd = jsonObject.getJSONObject("data").getDouble("utc");
+                serverUTC = (long)(dd * 1000);
+            } catch (JSONException e) {
+                serverUTC = 0;
+                e.printStackTrace();
+            }
+        }
+
+        return serverUTC;
     }
 
     private void reportMessage(com.hb.achat.achatassistant.Message msg) {

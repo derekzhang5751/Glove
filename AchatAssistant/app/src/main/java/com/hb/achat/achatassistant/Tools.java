@@ -15,8 +15,10 @@ public class Tools {
     public static final String GROUP_NAME = "内部群2";
     public static final String MD5_KEY = "ikenviWCkkiCvk8834701lfkdjfd";
 
-    public static String getCurTimeFormatted() {
-        Date nowTime = new Date();
+    public static String getCurTimeFormatted(long timeOffset) {
+        long lt = new Date().getTime();
+        lt = lt + timeOffset;
+        Date nowTime = new Date(lt);
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         return timeFormat.format(nowTime);
     }

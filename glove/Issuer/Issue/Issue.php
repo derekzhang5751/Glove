@@ -553,10 +553,10 @@ class Issue extends GloveBase {
                 $ret = $this->isSmall($right, $isUnion);
                 break;
             case 'D':
-                $ret = $this->isDouble($right);
+                $ret = $this->isSingle($right);
                 break;
             case 'S':
-                $ret = $this->isSingle($right);
+                $ret = $this->isDouble($right);
                 break;
             case 'Z':
                 $ret = $this->isBig($right, $isUnion);

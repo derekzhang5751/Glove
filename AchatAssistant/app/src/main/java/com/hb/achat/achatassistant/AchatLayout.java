@@ -12,6 +12,10 @@ public class AchatLayout {
     public static boolean isTargetGroupByName(AccessibilityNodeInfo node, String targetGroupName) {
         String groupName = "";
 
+        if (node == null) {
+            return false;
+        }
+
         for (int i=0; i<node.getChildCount(); i++) {
             AccessibilityNodeInfo subNode = node.getChild(i);
             if (subNode == null) {

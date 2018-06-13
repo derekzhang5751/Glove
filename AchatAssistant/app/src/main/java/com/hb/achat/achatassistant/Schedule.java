@@ -52,10 +52,13 @@ public class Schedule {
             return mStep;
         }
 
-        if (mCurTime.compareTo("04:00:00") >= 0 && mCurTime.compareTo("09:00:00") < 0) {
+        if (mCurTime.compareTo("04:00:00") >= 0 && mCurTime.compareTo("09:08:30") < 0) {
             mStep = STEP_BREAK;
             mNextWait = 10;
-        } else if (mCurTime.compareTo("00:03:00") >= 0 && mCurTime.compareTo("00:05:00") < 0) {
+        } else if (mCurTime.compareTo("00:00:00") >= 0 && mCurTime.compareTo("00:05:05") < 0) {
+            mStep = STEP_TURN;
+            mNextWait = 2;
+        } else if (mCurTime.compareTo("23:58:00") >= 0 && mCurTime.compareTo("24:00:00") < 0) {
             mStep = STEP_TURN;
             mNextWait = 2;
         } else {
@@ -105,6 +108,8 @@ public class Schedule {
 
             if (mStep < step) {
                 mStep = mStep + 1;
+            } else {
+                mStep = step;
             }
 
             switch (mStep) {

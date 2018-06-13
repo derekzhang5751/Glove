@@ -192,6 +192,9 @@ public class WebReport implements Runnable {
             //inquiry.mIssueNum = jsonObject.getJSONObject("data").getString("issue_num");
             JSONArray arrayIssue = jsonObject.getJSONArray("data");
             int size = arrayIssue.length();
+            if (size <= 0) {
+                return false;
+            }
             for (int i=0; i<size; i++) {
                 JSONObject objIssue = arrayIssue.getJSONObject(i);
                 if (objIssue != null) {

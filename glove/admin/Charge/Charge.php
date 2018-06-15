@@ -36,6 +36,10 @@ class Charge extends GloveBase {
             $this->doUserCharge();
             $this->loadChargeRequest();
             $this->loadMoneyCharged();
+        } else if ($this->action == 'ignore') {
+            $this->doChargeIgnore();
+            $this->loadChargeRequest();
+            $this->loadMoneyCharged();
         }
         
         return true;
@@ -59,6 +63,11 @@ class Charge extends GloveBase {
                 $GLOBALS['smarty']->display('user_charge.tpl');
                 break;
             case 'charge':
+                $GLOBALS['smarty']->assign("ChargeList", $this->return['data']['ChargeList']);
+                $GLOBALS['smarty']->assign("MoneyList", $this->return['data']['MoneyList']);
+                $GLOBALS['smarty']->display('charge_list.tpl');
+                break;
+            case 'ignore':
                 $GLOBALS['smarty']->assign("ChargeList", $this->return['data']['ChargeList']);
                 $GLOBALS['smarty']->assign("MoneyList", $this->return['data']['MoneyList']);
                 $GLOBALS['smarty']->display('charge_list.tpl');
@@ -124,6 +133,29 @@ class Charge extends GloveBase {
     }
     
     private function doUserCharge() {
+        $operation = isset($_REQUEST['operation']) ? trim($_REQUEST['operation']) : 'withdraw';
+        $remark = isset($_REQUEST['remark']) ? trim($_REQUEST['remark']) : '';
+        
+        $amount = isset($_REQUEST['amount']) ? trim($_REQUEST['amount']) : '0';
+        $amount = floatval($amount);
+        if ($amount <= 0.0) {
+            return false;
+        }
+        
+        $userId = intval($this->targetUserId);
+        if ($userId <= 0) {
+            return false;
+        }
+        
+        $moUser = new MoUser();
+        if ($operation == 'charge') {
+            return $moUser->doUserCharge($userId, $amount, OPT_SOURCE_MANUAL, $remark);
+        } else {
+            return $moUser->doUserWithdraw($userId, $amount, OPT_SOURCE_MANUAL, $remark);
+        }
+    }
+    
+    private function doChargeIgnore() {
         $operation = isset($_REQUEST['operation']) ? trim($_REQUEST['operation']) : 'withdraw';
         $remark = isset($_REQUEST['remark']) ? trim($_REQUEST['remark']) : '';
         

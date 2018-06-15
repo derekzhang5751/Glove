@@ -37,6 +37,8 @@
                     {else}
                         [<a href="/admin/Charge/do.php?act=to_withdraw&chargeid={$charge.id}">处理提款</a>]
                     {/if}
+                    &nbsp;/&nbsp;
+                    [<a href="/admin/Charge/do.php?act=ignore&chargeid={$charge.id}">忽略</a>]
                 </td>
             </tr>
             {/foreach}

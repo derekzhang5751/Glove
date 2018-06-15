@@ -73,7 +73,7 @@ class Issue extends GloveBase {
     }
     
     private function processInitIssuer() {
-        $type = $this->getCurrentLotteryType();
+        $type = $this->getNextLotteryType();
         // Check current issue term
         $curDate = date("Y-m-d");
         $curTime = intval( date("Hi") );
@@ -135,7 +135,7 @@ class Issue extends GloveBase {
             return false;
         }
         
-        $type = $this->getCurrentLotteryType();
+        $type = $this->getNextLotteryType();
         
         if ($this->issueNum > 0) {
             $arrayData = array(
@@ -215,6 +215,16 @@ class Issue extends GloveBase {
             return LOTTERY_XYFT;
         } else {
             return LOTTERY_PK10;
+        }
+    }
+    
+    private function getNextLotteryType() {
+        $curTime = intval( date("Hi") );
+        if ($curTime > 830 && $curTime < 2357) {
+            // 08:30 - 23:57
+            return LOTTERY_PK10;
+        } else {
+            return LOTTERY_XYFT;
         }
     }
     

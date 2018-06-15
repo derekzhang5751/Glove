@@ -41,7 +41,7 @@ function db_get_next_issue($type, $timeOffset = 0)
         [
             'type' => $type,
             //'status' => 0,
-            'issue_time[>]' => date("Y-m-d H:i:s", $issueTime),
+            'issue_time[>=]' => date("Y-m-d H:i:s", $issueTime),
             'ORDER' => ['issue_time' => 'ASC']
         ]
     );

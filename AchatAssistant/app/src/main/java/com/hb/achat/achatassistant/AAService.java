@@ -105,10 +105,10 @@ public class AAService extends AccessibilityService {
     }
 
     private void refreshMessageInGroup() {
-        Log.d("AASERVICE", "=============== AAService, refresh message ==============");
+        //Log.d("AASERVICE", "=============== AAService, refresh message ==============");
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         if (AchatLayout.isTargetGroupByName(rootNode, mGroupName)) {
-            Log.d("AASERVICE", "AAService, DOES IN achat");
+            //Log.d("AASERVICE", "AAService, DOES IN achat");
             if (mWebReport.mPauseFlag) {
                 mWebReport.mPauseFlag = false;
             }
@@ -136,14 +136,14 @@ public class AAService extends AccessibilityService {
                     str = str + "[" + msg.fromUserRemark + "] says [" + msg.content + "]\n";
                     Log.d("AASERVICE", "AAService, new message: " + msg.content);
                 }
-                if (!str.isEmpty()) {
-                    showToastMessage(str);
-                }
+                //if (!str.isEmpty()) {
+                //    showToastMessage(str);
+                //}
             } else {
                 //Log.d("AASERVICE", "AAService, get message list failed");
             }
         } else {
-            Log.d("AASERVICE", "AAService, NOT IN achat");
+            //Log.d("AASERVICE", "AAService, NOT IN achat");
             if (!mWebReport.mPauseFlag) {
                 mWebReport.mPauseFlag = true;
             }

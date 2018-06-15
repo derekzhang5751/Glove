@@ -6,36 +6,59 @@
         <link rel="stylesheet" type="text/css" href="/css/glove.css" />
     </head>
     <body>
-        <p>用户列表</p>
+        <p>充值申请列表</p>
         <table>
             <tr>
                 <td>编号</td>
-                <td>机器名</td>
-                <td>群名</td>
+                <td>SN</td>
                 <td>用户名</td>
-                <td>注册时间</td>
-                <td>角色</td>
+                <td>申请时间</td>
+                <td>金额</td>
+                <td>状态</td>
                 <td>操作</td>
             </tr>
-            {foreach $UserList as $key => $user}
+            {foreach $ChargeList as $key => $charge}
             <tr>
                 <td>{$key+1}</td>
-                <td>{$user.achat_name}</td>
-                <td>{$user.group_name}</td>
-                <td>{$user.user_name}</td>
-                <td>{$user.reg_time}</td>
+                <td>{$charge.charge_sn}</td>
+                <td>{$charge.user_name}</td>
+                <td>{$charge.req_time}</td>
+                <td>{$charge.amount}</td>
                 <td>
-                    {if $user.role eq 1}
-                        机器用户
+                    {if $charge.status eq 0}
+                        未处理
                     {else}
-                        普通用户
+                        已处理
                     {/if}
                 </td>
                 <td>
-                    [<a href="/admin/User/do.php?act=to_charge&userid={$user.user_id}">充值</a>]&nbsp;/&nbsp;
-                    [<a href="/admin/User/do.php?act=to_withdraw&userid={$user.user_id}">提款</a>]&nbsp;/&nbsp;
-                    [<a href="/admin/User/do.php?act=switchrole&userid={$user.user_id}&role={$user.role}">转变角色</a>]
+                    {if $charge.amount gte 0}
+                        [<a href="/admin/Charge/do.php?act=to_charge&chargeid={$charge.id}">处理充值</a>]
+                    {else}
+                        [<a href="/admin/Charge/do.php?act=to_withdraw&chargeid={$charge.id}">处理提款</a>]
+                    {/if}
                 </td>
+            </tr>
+            {/foreach}
+        </table>
+        <p>充值列表</p>
+        <table>
+            <tr>
+                <td>编号</td>
+                <td>用户名</td>
+                <td>金额</td>
+                <td>余额</td>
+                <td>时间</td>
+                <td>SN</td>
+            </tr>
+            {foreach $MoneyList as $key => $money}
+            <tr>
+                <td>{$key+1}</td>
+                <td>{$money.user_name}</td>
+                <td>{$money.amount}</td>
+                <td>{$money.balance}</td>
+                <td>{$money.add_time}</td>
+                <td>{$money.sn}</td>
             </tr>
             {/foreach}
         </table>

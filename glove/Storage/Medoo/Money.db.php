@@ -23,6 +23,30 @@ function db_charge_insert($money)
     }
 }
 
+function db_get_charges_by_status($status, $max)
+{
+    $charges = $GLOBALS['db']->select('charge',
+        ['id', 'charge_sn', 'user_id', 'user_name', 'amount', 'status', 'req_time'],
+        [
+            'status' => $status,
+            'ORDER' => ['id' => 'ASC'],
+            'LIMIT' => $max
+        ]
+    );
+    return $charges;
+}
+
+function db_get_charge_by_id($id)
+{
+    $charge = $GLOBALS['db']->get('charge',
+        ['id', 'charge_sn', 'user_id', 'user_name', 'amount', 'status', 'req_time'],
+        [
+            'id' => $id
+        ]
+    );
+    return $charge;
+}
+
 function db_get_charge_by_sn($sn)
 {
     $charge = $GLOBALS['db']->get('charge',
@@ -137,4 +161,17 @@ function db_user_won_amount_by_period($userId, $dayBegin, $dayEnd)
     } else {
         return 0;
     }
+}
+
+function db_get_money_by_source($source, $max)
+{
+    $charges = $GLOBALS['db']->select('money',
+        ['id', 'user_id', 'user_name', 'amount', 'balance', 'source', 'add_time', 'status', 'sn'],
+        [
+            'source' => $source,
+            'ORDER' => ['id' => 'DESC'],
+            'LIMIT' => $max
+        ]
+    );
+    return $charges;
 }

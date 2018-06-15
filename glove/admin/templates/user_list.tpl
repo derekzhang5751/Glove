@@ -32,8 +32,8 @@
                     {/if}
                 </td>
                 <td>
-                    [<a href="/admin/User/do.php?act=to_charge&userid={$user.user_id}">充值</a>]&nbsp;/&nbsp;
-                    [<a href="/admin/User/do.php?act=to_withdraw&userid={$user.user_id}">提款</a>]&nbsp;/&nbsp;
+                    [<a href="/admin/Charge/do.php?act=to_charge&userid={$user.user_id}">充值</a>]&nbsp;/&nbsp;
+                    [<a href="/admin/Charge/do.php?act=to_withdraw&userid={$user.user_id}">提款</a>]&nbsp;/&nbsp;
                     [<a href="/admin/User/do.php?act=switchrole&userid={$user.user_id}&role={$user.role}">转变角色</a>]
                 </td>
             </tr>

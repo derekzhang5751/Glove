@@ -7,7 +7,7 @@
     </head>
     <body>
         <p>用户充值提款</p>
-        <form id="chargeForm" method="post" action="/admin/User/do.php?act=charge" >
+        <form id="chargeForm" method="post" action="/admin/Charge/do.php?act=charge" >
         <table>
             <tr>
                 <td style="width: 110px; text-align: right;">用户名：</td>
@@ -48,13 +48,13 @@
                     {/if}
                 </td>
                 <td style="padding-left: 10px;">
-                    <input type="number" id="amount" name="amount" value="0">
+                    <input type="number" id="amount" name="amount" value="{$user.amount}">
                 </td>
             </tr>
             <tr>
                 <td style="text-align: right;">摘要说明：</td>
                 <td style="padding-left: 10px;">
-                    <input type="text" id="remark" name="remark" value="" maxlength="12">
+                    <input type="text" id="remark" name="remark" value="{$user.sn}" maxlength="12">
                 </td>
             </tr>
             <tr>

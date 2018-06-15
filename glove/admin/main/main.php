@@ -72,7 +72,8 @@ class main extends GloveBase {
     
     private function doMonitor() {
         if ($this->dayEnd == '') {
-            $this->dayEnd = date("Y-m-d");
+            $today = date("Y-m-d");
+            $this->dayEnd = date("Y-m-d", strtotime($today . " +1 day"));
         }
         if ($this->dayBegin == '') {
             $this->dayBegin = date("Y-m-d", strtotime($this->dayEnd . " -1 day"));

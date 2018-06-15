@@ -9,7 +9,7 @@
             <li><a href="/admin/main/do.php?act=main" target="main-frame">首页</a></li>
             <li><a href="/admin/main/do.php?act=monitor" target="main-frame">运营数据</a></li>
             <li><a href="/admin/User/do.php?act=list" target="main-frame">用户列表</a></li>
-            <li><a href="/admin/Order/do.php?act=list" target="main-frame">订单列表</a></li>
+            <li><a href="/admin/Order/do.php?act=list" target="main-frame">充值列表</a></li>
         </ul>
     </body>
 </html>

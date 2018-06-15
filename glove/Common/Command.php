@@ -261,7 +261,7 @@ class Command {
             $amount = str_replace($value, '', $msgLeft);
             $amount = trim($amount, " /");
             $amount = intval($amount);
-            if ($amount < 5 || $amount > 50000) {
+            if ($amount < 0 || $amount > 500000) {
                 return false;
             } else {
                 array_push($values, $value);

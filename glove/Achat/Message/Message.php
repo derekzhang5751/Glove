@@ -256,7 +256,7 @@ class Message extends GloveBase {
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;
         }
-        if ($command->getAmount() > 50000.0) {
+        if ($command->getAmount() > 10000.0) {
             $this->return['data']['reply'] = $GLOBALS['LANG']['error_amount_high'];
             $this->return['data']['status'] = COMMAND_FAILED;
             return false;

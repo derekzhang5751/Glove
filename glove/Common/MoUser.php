@@ -84,6 +84,8 @@ class MoUser {
         } else {
             if ($source == OPT_SOURCE_AUTO) {
                 db_set_charge_status($sn, 1);
+            } else {
+                db_set_charge_status($sn, 2);
             }
             return true;
         }

@@ -156,25 +156,20 @@ class Charge extends GloveBase {
     }
     
     private function doChargeIgnore() {
-        $operation = isset($_REQUEST['operation']) ? trim($_REQUEST['operation']) : 'withdraw';
-        $remark = isset($_REQUEST['remark']) ? trim($_REQUEST['remark']) : '';
+        $chargeId = intval($this->chargeId);
         
-        $amount = isset($_REQUEST['amount']) ? trim($_REQUEST['amount']) : '0';
-        $amount = floatval($amount);
-        if ($amount <= 0.0) {
-            return false;
-        }
-        
-        $userId = intval($this->targetUserId);
-        if ($userId <= 0) {
-            return false;
-        }
-        
-        $moUser = new MoUser();
-        if ($operation == 'charge') {
-            return $moUser->doUserCharge($userId, $amount, OPT_SOURCE_MANUAL, $remark);
+        $charge = array();
+        if ($chargeId > 0) {
+            $charge = db_get_charge_by_id($chargeId);
         } else {
-            return $moUser->doUserWithdraw($userId, $amount, OPT_SOURCE_MANUAL, $remark);
+            return false;
+        }
+        
+        if (!empty($charge)) {
+            db_set_charge_status($charge['charge_sn'], -1);
+            return true;
+        } else {
+            return false;
         }
     }
     

@@ -102,3 +102,17 @@ function db_get_issue_data($issueNum)
     );
     return $issue;
 }
+
+function db_get_issue_list($type, $begin, $end)
+{
+    $issueList = $GLOBALS['db']->select('issues',
+        ['issue_id', 'type', 'issue_num', 'n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'status', 'issue_time'],
+        [
+            'type' => $type,
+            'issue_time[>=]' => $begin,
+            'issue_time[<=]' => $end,
+            'ORDER' => ['issue_id' => 'DESC']
+        ]
+    );
+    return $issueList;
+}

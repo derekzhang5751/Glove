@@ -77,11 +77,10 @@ function db_get_last_term_issued($type, $maxSize)
     return $issueList;
 }
 
-function db_update_issue($type, $issueNum, $arrayData)
+function db_update_issue($issueNum, $arrayData)
 {
     $state = $GLOBALS['db']->update('issues', $arrayData,
         [
-            'type' => $type,
             'issue_num' => $issueNum
         ]
     );

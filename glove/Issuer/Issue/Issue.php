@@ -152,7 +152,7 @@ class Issue extends GloveBase {
                 'status' => 1,
                 'real_time' => $this->issueTime,
             );
-            $success = db_update_issue($type, $this->issueNum, $arrayData);
+            $success = db_update_issue($this->issueNum, $arrayData);
             //$this->return['success'] = $success;
             if ($success) {
                 $this->awards($this->issueNum, $arrayData);

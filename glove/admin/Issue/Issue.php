@@ -69,6 +69,14 @@ class Issue extends GloveBase {
             $type = 0;
         }
         $this->typeIssue = $type;
+        
+        if ($type == 1) {
+            // special handle for XYFT
+            $endTime = substr($end, 11);
+            if ($endTime > '04:30:00') {
+                $end = $this->dayIssue . ' 04:30:00';
+            }
+        }
         //
         $this->return['data']['IssueList'] = array();
         $issueList = db_get_issue_list($type, $begin, $end);

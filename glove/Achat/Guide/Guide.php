@@ -5,6 +5,7 @@
  */
 
 class Guide extends GloveBase {
+    private $action;
     
     private $return = [
         'success' => true,
@@ -22,11 +23,30 @@ class Guide extends GloveBase {
     }
     
     protected function prepareRequestParams() {
+        $postData = parent::prepareRequestParams();
+        if ($postData) {
+            if ($this->version == '1.0') {
+                $_POST['action']      = $postData['action'];
+                $_POST['achat_name']  = $postData['achat_name'];
+                $_POST['group_name']  = $postData['group_name'];
+            }
+        } else {
+            return false;
+        }
+        
+        $this->action = isset($_POST['action']) ? trim($_POST['action']) : '';
+        if ( empty($this->action) ) {
+            return false;
+        }
+        
         return true;
     }
     
     protected function process() {
-        $this->getGuideOrder();
+        if ($this->action == 'GetPreOrder') {
+            $this->getGuideOrder();
+        }
+        
         return true;
     }
     

@@ -16,29 +16,18 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `gv_achat_msg`
+-- Table structure for table `gv_guide`
 --
 
-DROP TABLE IF EXISTS `gv_achat_msg`;
+DROP TABLE IF EXISTS `gv_guide`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `gv_achat_msg` (
+CREATE TABLE `gv_guide` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `achat_name` varchar(128) NOT NULL,
-  `group_name` varchar(128) NOT NULL,
-  `achat_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `from_userid` int(10) unsigned NOT NULL DEFAULT '0',
-  `from_nick` varchar(128) NOT NULL,
-  `to_userid` int(10) unsigned NOT NULL DEFAULT '0',
-  `to_nick` varchar(128) NOT NULL,
-  `msg` varchar(256) NOT NULL DEFAULT '',
-  `cmd` varchar(45) NOT NULL DEFAULT '',
-  `recv_time` datetime DEFAULT NULL,
-  `reply` varchar(256) NOT NULL DEFAULT '',
-  `send_time` datetime DEFAULT NULL,
-  `status` int(11) NOT NULL,
-  `link_id` varchar(32) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  `issue_num` int(11) NOT NULL,
+  `remark` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `issue_num_UNIQUE` (`issue_num`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +40,4 @@ CREATE TABLE `gv_achat_msg` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-20 12:07:50
+-- Dump completed on 2018-06-20 12:07:51

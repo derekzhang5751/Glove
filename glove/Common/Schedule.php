@@ -49,9 +49,9 @@ class Schedule {
     private function computeStep() {
         if ($this->curTime >= '00:00:00' && $this->curTime < '00:02:00') {
             $this->step = STEP_PK10_ORDER;
-        }else if ($this->curTime >= '00:02:00' && $this->curTime < '00:03:00') {
+        } else if ($this->curTime >= '00:02:00' && $this->curTime < '00:03:00') {
             $this->step = STEP_PK10_ISSUE;
-        }else if ($this->curTime >= '00:03:00' && $this->curTime < '00:05:00') {
+        } else if ($this->curTime >= '00:03:00' && $this->curTime < '00:05:00') {
             $this->step = STEP_TURN;
         } else if ($this->curTime >= '00:05:00' && $this->curTime < '04:00:00') {
             $tmp = substr($this->curTime, 4);

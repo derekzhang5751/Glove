@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.Random;
 
 public class WebReport implements Runnable {
     public static final String SERVER_HOST = "http://205.209.167.174:8089";
@@ -139,6 +140,11 @@ public class WebReport implements Runnable {
 
         if (!TextUtils.isEmpty(preOrder)) {
             mSendText = preOrder;
+
+            Random r = new Random();
+            int sec = r.nextInt(30) + 1;
+            Tools.sleep(sec * 1000);
+
             Message msg = new Message();
             msg.what = Schedule.STEP_CLASS;
             mHandler.sendMessage(msg);
@@ -176,7 +182,7 @@ public class WebReport implements Runnable {
 
         postData = "version=1.0&DeviceType=1&md5=" + md5 + "&data=" + urlEncode;
         String response = httpPost(sUrl, postData);
-        //Log.d("AASERVICE", "Server UTC response: " + response);
+        //Log.d("AAGUIDE", "Server UTC response: " + response);
         if (!TextUtils.isEmpty(response)) {
             try {
                 jsonObject = new JSONObject(response);
@@ -210,6 +216,7 @@ public class WebReport implements Runnable {
 
         postData = "version=1.0&DeviceType=1&md5=" + md5 + "&data=" + urlEncode;
         String response = httpPost(sUrl, postData);
+        //Log.d("AAGUIDE", "PRE ORDER response: " + response);
         if (!TextUtils.isEmpty(response)) {
             try {
                 JSONObject jsonObject = new JSONObject(response);

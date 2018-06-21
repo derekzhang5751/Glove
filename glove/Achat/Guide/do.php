@@ -11,7 +11,7 @@ $LifeCfg = array(
     'LANG'           => 'zh_cn',
     'DB_TYPE'        => 'Medoo',
     'LOAD_DB'        => array(
-        'Guide'
+        'Guide', 'Issue'
     ),
     'LOAD_LIB'       => array(
         'Bricklayer/Lib/network.php',
